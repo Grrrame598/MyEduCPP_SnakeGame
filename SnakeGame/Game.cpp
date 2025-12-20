@@ -4,9 +4,12 @@
 
 using namespace SnakeGame;
 
-void Game::initialize(int P)
+void Game::initialize(int P, int V, int L, SoundManager* soundManager)
 {
     pointsPerApple = P;
+    gameSpeed = V;
+    growthLength = L;
+    this->soundManager = soundManager;
     gameField.initialize();
     snake.initSnake();
     
@@ -17,13 +20,13 @@ void Game::initialize(int P)
     numEatenApples = 0;
 }
 
-void Game::update(float deltaTime, int V, int L, SoundManager* soundManager)
+void Game::update(float deltaTime)
 {
-    snake.update(deltaTime, V);
+    snake.update(deltaTime, gameSpeed);
     
     if (snake.checkCollisions(apple.getPosition()))
     {
-        snake.grow(L);
+        snake.grow(growthLength);
         ++numEatenApples;
         
         do {

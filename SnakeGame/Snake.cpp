@@ -101,8 +101,21 @@ bool Snake::checkCollisions(const sf::Vector2i& applePosition)
     if (body.front().position.x < 2 || body.front().position.x > GRID_WIDTH - 1 ||
         body.front().position.y < 2 || body.front().position.y > GRID_HEIGHT - 1)
     {
-        gameState = GameState::GAME_OVER;
-        return false;  // Яблоко не съедено, игра окончена
+        
+        Segment newTail = body.back();
+        newTail.direction = body.back().direction;
+        if(body.back().direction == Direction::UP)
+            newTail.position.y += 1;
+        else if(body.back().direction == Direction::DOWN)
+            newTail.position.y -= 1;
+        else if(body.back().direction == Direction::LEFT)
+            newTail.position.x += 1;
+        else if(body.back().direction == Direction::RIGHT)
+            newTail.position.x -= 1;
+        body.push_back(newTail);
+        body.pop_front();
+        
+        gameState = GameState::GAME_OVER;        return false;  // Яблоко не съедено, игра окончена
     }
 
     // Проверка столкновения головы с телом
@@ -112,6 +125,19 @@ bool Snake::checkCollisions(const sf::Vector2i& applePosition)
         if (body.front().position.x == body[i].position.x && 
             body.front().position.y == body[i].position.y)
         {
+            Segment newTail = body.back();
+            newTail.direction = body.back().direction;
+            if(body.back().direction == Direction::UP)
+                newTail.position.y += 1;
+            else if(body.back().direction == Direction::DOWN)
+                newTail.position.y -= 1;
+            else if(body.back().direction == Direction::LEFT)
+                newTail.position.x += 1;
+            else if(body.back().direction == Direction::RIGHT)
+                newTail.position.x -= 1;
+            body.push_back(newTail);
+            
+            body.pop_front();
             gameState = GameState::GAME_OVER;
             return false;  // Яблоко не съедено, игра окончена
         }

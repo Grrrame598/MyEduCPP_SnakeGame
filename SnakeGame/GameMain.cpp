@@ -190,7 +190,7 @@ int main()
 				{ 
 					gameState = GameState::GAME;
 					if (stateBeforeWaiting == GameState::MENU || stateBeforeWaiting == GameState::GAME_OVER)
-						game.initialize(menuState.P);
+						game.initialize(menuState.P, menuState.V, menuState.L, &soundManager);
 					soundManager.playBackgroundMusic();
 					frameClock.restart();
 				}
@@ -199,7 +199,7 @@ int main()
 			case GameState::GAME:
 			{
 				float deltaTime = frameClock.restart().asSeconds();
-				game.update(deltaTime, menuState.V, menuState.L, &soundManager);
+				game.update(deltaTime);
 				break;
 			}
 		}
@@ -218,7 +218,17 @@ int main()
 			ui.drawCountdown(window, remainingSeconds);
 		}
 		else if (gameState == GameState::PAUSE)
+		{
+			game.draw(window);
+			sf::Text scoreText;
+			scoreText.setFont(ui.getFont());
+			scoreText.setString("Score: " + std::to_string(game.getScore()));
+			scoreText.setCharacterSize(24u);
+			scoreText.setPosition(10, 10);
+			scoreText.setFillColor(sf::Color::White);
+			window.draw(scoreText);
 			ui.drawPauseMenu(window, menuState);
+		}
 		else if (gameState == GameState::GAME)
 		{
 			game.draw(window);
@@ -231,9 +241,15 @@ int main()
 			window.draw(scoreText);
 		}
 		else if (gameState == GameState::GAME_OVER)
+		{
+			game.draw(window);
 			ui.drawGameOverMenu(window, menuState, game.getScore(), highScoreManager);
+		}
 		else if (gameState == GameState::NAME_INPUT)
+		{
+			game.draw(window);
 			ui.drawNameInputPopup(window, menuState);
+		}
 		else if (gameState == GameState::HIGH_SCORES)
 		{
 			highScoreManager.drawHighScoresTable(window, ui.getFont());

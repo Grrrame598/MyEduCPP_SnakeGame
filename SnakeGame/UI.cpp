@@ -132,7 +132,7 @@ void UI::draw(sf::RenderWindow& window, const MenuState& state)
 void UI::drawPauseMenu(sf::RenderWindow& window, const MenuState& state)
 {
     sf::RectangleShape overlay(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-    overlay.setFillColor(sf::Color(0, 0, 0, 180));
+    overlay.setFillColor(sf::Color(0, 0, 0, 100));
     window.draw(overlay);
     
     const float fontSize = 30.0f;
@@ -159,7 +159,7 @@ void UI::drawPauseMenu(sf::RenderWindow& window, const MenuState& state)
 void UI::drawGameOverMenu(sf::RenderWindow& window, const MenuState& state, int score, const HighScoreManager& highScoreManager)
 {
     sf::RectangleShape overlay(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-    overlay.setFillColor(sf::Color(0, 0, 0, 180));
+    overlay.setFillColor(sf::Color(0, 0, 0, 100));
     window.draw(overlay);
     
     const float scoreFontSize = 36.0f;
@@ -293,7 +293,7 @@ void UI::resetNameInput()
 void UI::drawNameInputPopup(sf::RenderWindow& window, MenuState& state)
 {
     sf::RectangleShape overlay(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-    overlay.setFillColor(sf::Color(0, 0, 0, 180));
+    overlay.setFillColor(sf::Color(0, 0, 0, 100));
     window.draw(overlay);
     
     const float titleFontSize = 40.0f;

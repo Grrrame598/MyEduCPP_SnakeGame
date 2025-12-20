@@ -12,8 +12,8 @@ class SoundManager;
 class Game
 {
 public:
-    void initialize(int P);
-    void update(float deltaTime, int V, int L, SoundManager* soundManager);
+    void initialize(int P, int V, int L, SoundManager* soundManager);
+    void update(float deltaTime);
     void draw(sf::RenderWindow& window);
     void handleInput(sf::Keyboard::Key key);
     int getNumEatenApples() const { return numEatenApples; }
@@ -25,6 +25,9 @@ private:
     Snake snake;
     int numEatenApples = 0;
     int pointsPerApple = 2;
+    int gameSpeed = 0;
+    int growthLength = 0;
+    SoundManager* soundManager = nullptr;
 };
 
 } // namespace SnakeGame
