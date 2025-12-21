@@ -34,16 +34,25 @@
     <ClCompile Include="UI.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Paddle.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Ball.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Apple.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameField.h" />
+    <ClInclude Include="GameStateManager.h" />
     <ClInclude Include="HighScoreManager.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Snake.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="UI.h" />
+    <ClInclude Include="Paddle.h" />
+    <ClInclude Include="Ball.h" />
   </ItemGroup>
 </Project>

@@ -167,17 +167,22 @@
     <ClCompile Include="HighScoreManager.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="UI.cpp" />
+    <ClCompile Include="Paddle.cpp" />
+    <ClCompile Include="Ball.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Apple.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameField.h" />
+    <ClInclude Include="GameStateManager.h" />
     <ClInclude Include="HighScoreManager.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Snake.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="UI.h" />
+    <ClInclude Include="Paddle.h" />
+    <ClInclude Include="Ball.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

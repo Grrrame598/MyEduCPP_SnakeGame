@@ -8,10 +8,23 @@
 namespace SnakeGame
 {
 
-struct HighScoreEntry
+class HighScoreEntry
 {
+private:
     std::string playerName;
     int score;
+
+public:
+    HighScoreEntry(const std::string& name = "", int scoreValue = 0)
+        : playerName(name), score(scoreValue)
+    {
+    }
+    
+    const std::string& getPlayerName() const { return playerName; }
+    int getScore() const { return score; }
+    
+    void setPlayerName(const std::string& name) { playerName = name; }
+    void setScore(int scoreValue) { score = scoreValue; }
 };
 
 class HighScoreManager

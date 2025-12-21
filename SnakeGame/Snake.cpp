@@ -1,6 +1,7 @@
 #include "Snake.h"
 #include "Constants.h"
 #include "Math.h"
+#include "GameStateManager.h"
 #include <cassert>
 
 namespace SnakeGame
@@ -115,7 +116,7 @@ bool Snake::checkCollisions(const sf::Vector2i& applePosition)
         body.push_back(newTail);
         body.pop_front();
         
-        gameState = GameState::GAME_OVER;        return false;  // Яблоко не съедено, игра окончена
+        gameStateManager.setState(GameState::GAME_OVER);        return false;  // Яблоко не съедено, игра окончена
     }
 
     // Проверка столкновения головы с телом
@@ -138,7 +139,7 @@ bool Snake::checkCollisions(const sf::Vector2i& applePosition)
             body.push_back(newTail);
             
             body.pop_front();
-            gameState = GameState::GAME_OVER;
+            gameStateManager.setState(GameState::GAME_OVER);
             return false;  // Яблоко не съедено, игра окончена
         }
     }
@@ -230,23 +231,7 @@ void Snake::draw(sf::RenderWindow& window)
             int directionIndex = static_cast<int>(segment.direction);
             textureToUse = &headTextures[directionIndex];
         }
-        // ЗАКОММЕНТИРОВАНО: Отдельная обработка хвоста (можно вернуть при необходимости)
-        // else if (i == body.size() - 1)
-        // {
-        //     // Хвост - последний сегмент
-        //     int directionIndex = static_cast<int>(segment.direction);
-        //     // Инвертируем направление для хвоста (хвост смотрит в противоположную сторону)
-        //     int invertedIndex;
-        //     switch (directionIndex)
-        //     {
-        //         case 0: invertedIndex = 1; break; // UP → DOWN
-        //         case 1: invertedIndex = 0; break; // DOWN → UP
-        //         case 2: invertedIndex = 3; break; // LEFT → RIGHT
-        //         case 3: invertedIndex = 2; break; // RIGHT → LEFT
-        //         default: invertedIndex = directionIndex; break;
-        //     }
-        //     textureToUse = &tailTextures[invertedIndex];
-        // }
+
         else if (i == body.size() - 1)
         {
             // Хвост - последний сегмент, отдельная обработка

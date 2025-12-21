@@ -26,13 +26,13 @@ SoundManager::SoundManager(MenuState* menuState)
 
 void SoundManager::playSessionEnd()
 {
-    if (menuState && menuState->soundEnabled)
+    if (menuState && menuState->getSoundEnabled())
         sessionEndSound.play();
 }
 
 void SoundManager::playBackgroundMusic()
 {
-    if (menuState && menuState->musicEnabled)
+    if (menuState && menuState->getMusicEnabled())
     {
         backgroundMusic.setVolume(30.0f);
         backgroundMusic.play();
@@ -47,7 +47,7 @@ void SoundManager::stopBackgroundMusic()
 
 void SoundManager::playAppleEat()
 {
-    if (menuState && menuState->soundEnabled)
+    if (menuState && menuState->getSoundEnabled())
     {
         appleEatSound.setVolume(100.0f);
         appleEatSound.play();
@@ -56,13 +56,13 @@ void SoundManager::playAppleEat()
 
 void SoundManager::playMenuHover()
 {
-    if (menuState && menuState->soundEnabled)
+    if (menuState && menuState->getSoundEnabled())
         menuHoverSound.play();
 }
 
 void SoundManager::playEnter()
 {
-    if (menuState && menuState->soundEnabled)
+    if (menuState && menuState->getSoundEnabled())
     {
         enterSound.stop();
         enterSound.setVolume(100.0f);

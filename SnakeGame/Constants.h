@@ -35,5 +35,3 @@
 		HIGH_SCORES,
 		EXIT
 	};
-	
-	extern GameState gameState;

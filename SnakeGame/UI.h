@@ -42,8 +42,9 @@ struct MenuItem
 	std::string text;
 };
 
-struct MenuState
+class MenuState
 {
+private:
 	bool soundEnabled = true;
 	bool musicEnabled = true;
 	int selectedIndex = 0;
@@ -53,6 +54,29 @@ struct MenuState
 	int L = 1;
 	float T = 3.0f;
 	std::string difficultyLevel = DIFFICULTY_EASY;
+
+public:
+	MenuState() = default;
+	
+	// Getters
+	bool getSoundEnabled() const { return soundEnabled; }
+	bool getMusicEnabled() const { return musicEnabled; }
+	int getSelectedIndex() const { return selectedIndex; }
+	int getV() const { return V; }
+	int getP() const { return P; }
+	int getL() const { return L; }
+	float getT() const { return T; }
+	const std::string& getDifficultyLevel() const { return difficultyLevel; }
+	
+	// Setters
+	void setSoundEnabled(bool value) { soundEnabled = value; }
+	void setMusicEnabled(bool value) { musicEnabled = value; }
+	void setSelectedIndex(int value) { selectedIndex = value; }
+	void setV(int value) { V = value; }
+	void setP(int value) { P = value; }
+	void setL(int value) { L = value; }
+	void setT(float value) { T = value; }
+	void setDifficultyLevel(const std::string& value) { difficultyLevel = value; }
 };
 
 class UI

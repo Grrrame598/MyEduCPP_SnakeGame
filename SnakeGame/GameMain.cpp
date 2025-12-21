@@ -8,10 +8,14 @@
 #include "Game.h"
 #include "SoundManager.h"
 #include "HighScoreManager.h"
+#include "GameStateManager.h"
+
+// Определение глобального объекта в namespace SnakeGame (объявление в GameStateManager.h через extern)
+namespace SnakeGame {
+    GameStateManager gameStateManager;
+}
 
 using namespace SnakeGame;
-
-GameState gameState = GameState::MENU;
 
 int main()
 {
@@ -35,7 +39,7 @@ int main()
 	
 	while (window.isOpen())
 	{
-		if (gameState == GameState::EXIT)
+		if (gameStateManager.getCurrentState() == GameState::EXIT)
 		{
 			window.close();
 			break;
@@ -52,7 +56,7 @@ int main()
 			
 			if (event.type == sf::Event::KeyPressed)
 			{
-				if (gameState == GameState::MENU)
+				if (gameStateManager.getCurrentState() == GameState::MENU)
 				{
 					if (event.key.code == sf::Keyboard::W || event.key.code == sf::Keyboard::Up)
 						ui.moveUp(menuState);
@@ -63,7 +67,7 @@ int main()
 					else if (event.key.code == sf::Keyboard::B || event.key.code == sf::Keyboard::Escape)
 						ui.goBack(menuState);
 				}
-				else if (gameState == GameState::PAUSE)
+				else if (gameStateManager.getCurrentState() == GameState::PAUSE)
 				{
 					if (event.key.code == sf::Keyboard::W || event.key.code == sf::Keyboard::Up)
 						ui.moveUp(menuState);
@@ -75,17 +79,17 @@ int main()
 						ui.selectPopupMenu(menuState, pauseMenuItems, 2);
 					}
 				}
-				else if (gameState == GameState::GAME)
+			else if (gameStateManager.getCurrentState() == GameState::GAME)
+			{
+				if (event.key.code == sf::Keyboard::P)
 				{
-					if (event.key.code == sf::Keyboard::P)
-					{
-						gameState = GameState::PAUSE;
-						menuState.selectedIndex = 0;
+					gameStateManager.setState(GameState::PAUSE);
+						menuState.setSelectedIndex(0);
 					}
 					else
 						game.handleInput(event.key.code);
 				}
-				else if (gameState == GameState::GAME_OVER)
+				else if (gameStateManager.getCurrentState() == GameState::GAME_OVER)
 				{
 					if (event.key.code == sf::Keyboard::W || event.key.code == sf::Keyboard::Up)
 						ui.moveUp(menuState);
@@ -97,15 +101,15 @@ int main()
 						ui.selectPopupMenu(menuState, gameOverMenuItems, 2);
 					}
 				}
-				else if (gameState == GameState::HIGH_SCORES)
+			else if (gameStateManager.getCurrentState() == GameState::HIGH_SCORES)
+			{
+				if (event.key.code == sf::Keyboard::B || event.key.code == sf::Keyboard::Escape)
 				{
-					if (event.key.code == sf::Keyboard::B || event.key.code == sf::Keyboard::Escape)
-					{
-						gameState = GameState::MENU;
-						menuState.selectedIndex = 0;
-					}
+					gameStateManager.setState(GameState::MENU);
+					menuState.setSelectedIndex(0);
 				}
-				else if (gameState == GameState::NAME_INPUT)
+				}
+				else if (gameStateManager.getCurrentState() == GameState::NAME_INPUT)
 				{
 					if (!ui.getIsEnteringName())
 					{
@@ -113,11 +117,11 @@ int main()
 							ui.moveUp(menuState);
 						else if (event.key.code == sf::Keyboard::S || event.key.code == sf::Keyboard::Down)
 							ui.moveDown(menuState);
-						else if (event.key.code == sf::Keyboard::Enter)
-						{
-							int selectedOption = menuState.selectedIndex;
-							ui.selectNameInputOption(menuState);
-							if (selectedOption == 0 && gameState == GameState::GAME_OVER)
+					else if (event.key.code == sf::Keyboard::Enter)
+					{
+						int selectedOption = menuState.getSelectedIndex();
+						ui.selectNameInputOption(menuState);
+						if (selectedOption == 0 && gameStateManager.getCurrentState() == GameState::GAME_OVER)
 							{
 								highScoreManager.addScore("XYZ", game.getScore());
 								highScoreManager.saveHighScores();
@@ -143,8 +147,8 @@ int main()
 						{
 							highScoreManager.addScore(ui.getCurrentPlayerName(), game.getScore());
 							highScoreManager.saveHighScores();
-							gameState = GameState::GAME_OVER;
-							menuState.selectedIndex = 0;
+							gameStateManager.setState(GameState::GAME_OVER);
+							menuState.setSelectedIndex(0);
 							ui.resetNameInput();
 						}
 					}
@@ -157,40 +161,40 @@ int main()
 		static GameState previousState = GameState::MENU;
 		static GameState stateBeforeWaiting = GameState::MENU;
 		
-		if (gameState == GameState::WAITING && previousState != GameState::WAITING)
+		if (gameStateManager.getCurrentState() == GameState::WAITING && previousState != GameState::WAITING)
 		{
 			stateBeforeWaiting = previousState;
 			delayTimer.restart();
 		}
 		
-		if (previousState == GameState::GAME && gameState != GameState::GAME)
+		if (previousState == GameState::GAME && gameStateManager.getCurrentState() != GameState::GAME)
 			soundManager.stopBackgroundMusic();
 		
-		if (previousState == GameState::GAME && gameState == GameState::GAME_OVER)
+		if (previousState == GameState::GAME && gameStateManager.getCurrentState() == GameState::GAME_OVER)
 		{
 			soundManager.playSessionEnd();
 			if (highScoreManager.isHighScore(game.getScore(), Y))
-				gameState = GameState::NAME_INPUT;
+				gameStateManager.setState(GameState::NAME_INPUT);
 		}
 		
 		static bool previousMusicEnabled = true;
-		if (!menuState.musicEnabled && previousMusicEnabled != menuState.musicEnabled)
+		if (!menuState.getMusicEnabled() && previousMusicEnabled != menuState.getMusicEnabled())
 			soundManager.stopBackgroundMusic();
-		previousMusicEnabled = menuState.musicEnabled;
+		previousMusicEnabled = menuState.getMusicEnabled();
 		
-		previousState = gameState;
+		previousState = gameStateManager.getCurrentState();
 
 		// Обновление игры
-		switch (gameState)
+		switch (gameStateManager.getCurrentState())
 		{
-			case GameState::WAITING:
-			{
-				float remainingSeconds = menuState.T - delayTimer.getElapsedTime().asSeconds();
-				if (remainingSeconds < -0.2f) 
-				{ 
-					gameState = GameState::GAME;
-					if (stateBeforeWaiting == GameState::MENU || stateBeforeWaiting == GameState::GAME_OVER)
-						game.initialize(menuState.P, menuState.V, menuState.L, &soundManager);
+		case GameState::WAITING:
+		{
+			float remainingSeconds = menuState.getT() - delayTimer.getElapsedTime().asSeconds();
+			if (remainingSeconds < -0.2f) 
+			{ 
+				gameStateManager.setState(GameState::GAME);
+				if (stateBeforeWaiting == GameState::MENU || stateBeforeWaiting == GameState::GAME_OVER)
+					game.initialize(menuState.getP(), menuState.getV(), menuState.getL(), &soundManager);
 					soundManager.playBackgroundMusic();
 					frameClock.restart();
 				}
@@ -207,17 +211,17 @@ int main()
 		// Отрисовка
 		window.clear(sf::Color::Black);
 		
-		if (gameState == GameState::MENU)
+		if (gameStateManager.getCurrentState() == GameState::MENU)
 		{
 			ui.draw(window, menuState);
 			ui.drawControlsHint(window);
 		}
-		else if (gameState == GameState::WAITING)
+		else if (gameStateManager.getCurrentState() == GameState::WAITING)
 		{
-			float remainingSeconds = menuState.T - delayTimer.getElapsedTime().asSeconds();
+			float remainingSeconds = menuState.getT() - delayTimer.getElapsedTime().asSeconds();
 			ui.drawCountdown(window, remainingSeconds);
 		}
-		else if (gameState == GameState::PAUSE)
+		else if (gameStateManager.getCurrentState() == GameState::PAUSE)
 		{
 			game.draw(window);
 			sf::Text scoreText;
@@ -229,7 +233,7 @@ int main()
 			window.draw(scoreText);
 			ui.drawPauseMenu(window, menuState);
 		}
-		else if (gameState == GameState::GAME)
+		else if (gameStateManager.getCurrentState() == GameState::GAME)
 		{
 			game.draw(window);
 			sf::Text scoreText;
@@ -240,17 +244,17 @@ int main()
 			scoreText.setFillColor(sf::Color::White);
 			window.draw(scoreText);
 		}
-		else if (gameState == GameState::GAME_OVER)
+		else if (gameStateManager.getCurrentState() == GameState::GAME_OVER)
 		{
 			game.draw(window);
 			ui.drawGameOverMenu(window, menuState, game.getScore(), highScoreManager);
 		}
-		else if (gameState == GameState::NAME_INPUT)
+		else if (gameStateManager.getCurrentState() == GameState::NAME_INPUT)
 		{
 			game.draw(window);
 			ui.drawNameInputPopup(window, menuState);
 		}
-		else if (gameState == GameState::HIGH_SCORES)
+		else if (gameStateManager.getCurrentState() == GameState::HIGH_SCORES)
 		{
 			highScoreManager.drawHighScoresTable(window, ui.getFont());
 			ui.drawControlsHint(window);

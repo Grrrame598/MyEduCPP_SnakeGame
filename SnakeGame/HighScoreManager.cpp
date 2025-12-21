@@ -21,7 +21,7 @@ void HighScoreManager::saveHighScores()
     }
     
     for (const auto& entry : scores)
-        file << entry.playerName << " " << entry.score << std::endl;
+        file << entry.getPlayerName() << " " << entry.getScore() << std::endl;
     
     file.close();
 }
@@ -31,9 +31,9 @@ void HighScoreManager::sortScores()
     std::sort(scores.begin(), scores.end(), 
         [](const HighScoreEntry& a, const HighScoreEntry& b) 
         {
-            if (a.score != b.score)
-                return a.score > b.score;
-            return a.playerName < b.playerName;
+            if (a.getScore() != b.getScore())
+                return a.getScore() > b.getScore();
+            return a.getPlayerName() < b.getPlayerName();
         });
 }
 
@@ -41,9 +41,7 @@ void HighScoreManager::addScore(const std::string& name, int score)
 {
     if (scores.size() < MAX_SCORES)
     {
-        HighScoreEntry entry;
-        entry.playerName = name;
-        entry.score = score;
+        HighScoreEntry entry(name, score);
         scores.push_back(entry);
         sortScores();
         return;
@@ -51,11 +49,9 @@ void HighScoreManager::addScore(const std::string& name, int score)
     
     sortScores();
     
-    if (score > scores.back().score)
+    if (score > scores.back().getScore())
     {
-        HighScoreEntry entry;
-        entry.playerName = name;
-        entry.score = score;
+        HighScoreEntry entry(name, score);
         scores.push_back(entry);
         sortScores();
         
@@ -73,12 +69,12 @@ bool HighScoreManager::isHighScore(int score, int topCount) const
     std::sort(sortedScores.begin(), sortedScores.end(),
         [](const HighScoreEntry& a, const HighScoreEntry& b)
         {
-            if (a.score != b.score)
-                return a.score > b.score;
-            return a.playerName < b.playerName;
+            if (a.getScore() != b.getScore())
+                return a.getScore() > b.getScore();
+            return a.getPlayerName() < b.getPlayerName();
         });
     
-    return score > sortedScores[topCount - 1].score;
+    return score > sortedScores[topCount - 1].getScore();
 }
 
 std::vector<HighScoreEntry> HighScoreManager::getTopScores(int count) const
@@ -87,9 +83,9 @@ std::vector<HighScoreEntry> HighScoreManager::getTopScores(int count) const
     std::sort(sortedScores.begin(), sortedScores.end(),
         [](const HighScoreEntry& a, const HighScoreEntry& b)
         {
-            if (a.score != b.score)
-                return a.score > b.score;
-            return a.playerName < b.playerName;
+            if (a.getScore() != b.getScore())
+                return a.getScore() > b.getScore();
+            return a.getPlayerName() < b.getPlayerName();
         });
     
     size_t returnCount = std::min(sortedScores.size(), static_cast<size_t>(count));
@@ -131,9 +127,7 @@ void HighScoreManager::loadHighScores()
             for (size_t i = 1; i < parts.size() - 1; ++i)
                 name += " " + parts[i];
             
-            HighScoreEntry entry;
-            entry.playerName = name;
-            entry.score = score;
+            HighScoreEntry entry(name, score);
             scores.push_back(entry);
         }
         catch (const std::exception&)
@@ -162,7 +156,7 @@ void HighScoreManager::drawHighScoresTable(sf::RenderWindow& window, const sf::F
     {
         sf::Text text;
         text.setFont(font);
-        text.setString(std::to_string(index) + ". " + entry.playerName + "....." + std::to_string(entry.score));
+        text.setString(std::to_string(index) + ". " + entry.getPlayerName() + "....." + std::to_string(entry.getScore()));
         text.setCharacterSize(static_cast<unsigned int>(fontSize));
         
         float yPos = tableStartY + ((index - 1) * deltaY);

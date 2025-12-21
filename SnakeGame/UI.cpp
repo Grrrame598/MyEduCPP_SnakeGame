@@ -2,6 +2,7 @@
 #include "Constants.h"
 #include "SoundManager.h"
 #include "HighScoreManager.h"
+#include "GameStateManager.h"
 #include <cassert>
 
 using namespace SnakeGame;
@@ -88,7 +89,7 @@ void UI::goBack(MenuState& state)
         if (soundManager)
             soundManager->playEnter();
         menuStack.pop_back();
-        state.selectedIndex = 0;
+        state.setSelectedIndex(0);
     }
 }
 
@@ -110,11 +111,11 @@ void UI::draw(sf::RenderWindow& window, const MenuState& state)
         
         if (currentMenu[i].text == SETTINGS_SOUND)
         {
-            displayText = SETTINGS_SOUND + " " + (state.soundEnabled ? CHECKBOX_ON : CHECKBOX_OFF);
+            displayText = SETTINGS_SOUND + " " + (state.getSoundEnabled() ? CHECKBOX_ON : CHECKBOX_OFF);
         }
         else if (currentMenu[i].text == SETTINGS_MUSIC)
         {
-            displayText = SETTINGS_MUSIC + " " + (state.musicEnabled ? CHECKBOX_ON : CHECKBOX_OFF);
+            displayText = SETTINGS_MUSIC + " " + (state.getMusicEnabled() ? CHECKBOX_ON : CHECKBOX_OFF);
         }
         
         text.setString(displayText);
@@ -124,7 +125,7 @@ void UI::draw(sf::RenderWindow& window, const MenuState& state)
         text.setPosition(centerX, yPos);
         text.setOrigin(text.getLocalBounds().width / 2, 0);
         
-        text.setFillColor(i == state.selectedIndex ? sf::Color::Green : sf::Color::White);
+        text.setFillColor(i == state.getSelectedIndex() ? sf::Color::Green : sf::Color::White);
         window.draw(text);
     }
 }
@@ -150,7 +151,7 @@ void UI::drawPauseMenu(sf::RenderWindow& window, const MenuState& state)
         float yPos = menuStartY + (i * deltaY);
         text.setPosition(centerX, yPos);
         text.setOrigin(text.getLocalBounds().width / 2, 0);
-        text.setFillColor(i == state.selectedIndex ? sf::Color::Green : sf::Color::White);
+        text.setFillColor(i == state.getSelectedIndex() ? sf::Color::Green : sf::Color::White);
         
         window.draw(text);
     }
@@ -188,7 +189,7 @@ void UI::drawGameOverMenu(sf::RenderWindow& window, const MenuState& state, int 
     {
         sf::Text recordText;
         recordText.setFont(font);
-        recordText.setString(std::to_string(index) + ". " + entry.playerName + "....." + std::to_string(entry.score));
+        recordText.setString(std::to_string(index) + ". " + entry.getPlayerName() + "....." + std::to_string(entry.getScore()));
         recordText.setCharacterSize(static_cast<unsigned int>(recordsFontSize));
         
         float yPos = recordsY + ((index - 1) * recordsDeltaY);
@@ -209,7 +210,7 @@ void UI::drawGameOverMenu(sf::RenderWindow& window, const MenuState& state, int 
         float yPos = menuStartY + (i * deltaY);
         text.setPosition(centerX, yPos);
         text.setOrigin(text.getLocalBounds().width / 2, 0);
-        text.setFillColor(i == state.selectedIndex ? sf::Color::Green : sf::Color::White);
+        text.setFillColor(i == state.getSelectedIndex() ? sf::Color::Green : sf::Color::White);
         window.draw(text);
     }
 }
@@ -238,9 +239,9 @@ void UI::drawCountdown(sf::RenderWindow& window, float remainingSeconds)
 void UI::moveDown(MenuState& state)
 {
     const auto& currentMenu = menuStack.back();
-    if (state.selectedIndex < currentMenu.size() - 1)
+    if (state.getSelectedIndex() < currentMenu.size() - 1)
     {
-        state.selectedIndex++;
+        state.setSelectedIndex(state.getSelectedIndex() + 1);
         if (soundManager)
             soundManager->playMenuHover();
     }
@@ -248,9 +249,9 @@ void UI::moveDown(MenuState& state)
 
 void UI::moveUp(MenuState& state)
 {
-    if (state.selectedIndex > 0)
+    if (state.getSelectedIndex() > 0)
     {
-        state.selectedIndex--;
+        state.setSelectedIndex(state.getSelectedIndex() - 1);
         if (soundManager)
             soundManager->playMenuHover();
     }
@@ -261,14 +262,14 @@ void UI::selectPopupMenu(MenuState& state, const std::string menuItems[], int it
     if (soundManager)
         soundManager->playEnter();
     
-    std::string selectedText = menuItems[state.selectedIndex];
+    std::string selectedText = menuItems[state.getSelectedIndex()];
     
     if (selectedText == PAUSE_CONTINUE || selectedText == GAME_OVER_START_GAME)
-        gameState = GameState::WAITING;
+        gameStateManager.setState(GameState::WAITING);
     else if (selectedText == PAUSE_EXIT_TO_MENU || selectedText == GAME_OVER_TO_MENU)
     {
-        gameState = GameState::MENU;
-        state.selectedIndex = 0;
+        gameStateManager.setState(GameState::MENU);
+        state.setSelectedIndex(0);
     }
 }
 
@@ -323,7 +324,7 @@ void UI::drawNameInputPopup(sf::RenderWindow& window, MenuState& state)
         float yPos = popupStartY + deltaY + (i * deltaY);
         text.setPosition(centerX, yPos);
         text.setOrigin(text.getLocalBounds().width / 2, 0);
-        text.setFillColor(i == state.selectedIndex ? sf::Color::Green : sf::Color::White);
+        text.setFillColor(i == state.getSelectedIndex() ? sf::Color::Green : sf::Color::White);
         window.draw(text);
     }
     
@@ -356,15 +357,15 @@ void UI::selectNameInputOption(MenuState& state)
     if (soundManager)
         soundManager->playEnter();
     
-    if (state.selectedIndex == 0)
+    if (state.getSelectedIndex() == 0)
     {
-        gameState = GameState::GAME_OVER;
-        state.selectedIndex = 0;
+        gameStateManager.setState(GameState::GAME_OVER);
+        state.setSelectedIndex(0);
     }
-    else if (state.selectedIndex == 1)
+    else if (state.getSelectedIndex() == 1)
     {
         isEnteringName = true;
-        state.selectedIndex = 0;
+        state.setSelectedIndex(0);
     }
 }
 
@@ -374,26 +375,26 @@ void UI::select(MenuState& state)
         soundManager->playEnter();
     
     const auto& currentMenu = menuStack.back();
-    std::string selectedText = currentMenu[state.selectedIndex].text;
+    std::string selectedText = currentMenu[state.getSelectedIndex()].text;
     
     if (menuStack.size() == 1)
     {
         if (selectedText == MENU_START_GAME)
-            gameState = GameState::WAITING;
+            gameStateManager.setState(GameState::WAITING);
         else if (selectedText == MENU_DIFFICULTY)
         {
             openDifficultyMenu();
-            state.selectedIndex = 0;
+            state.setSelectedIndex(0);
         }
         else if (selectedText == MENU_HIGH_SCORES)
-            gameState = GameState::HIGH_SCORES;
+            gameStateManager.setState(GameState::HIGH_SCORES);
         else if (selectedText == MENU_SETTINGS)
         {
             openSettingsMenu();
-            state.selectedIndex = 0;
+            state.setSelectedIndex(0);
         }
         else if (selectedText == MENU_EXIT)
-            gameState = GameState::EXIT;
+            gameStateManager.setState(GameState::EXIT);
     }
     else if (menuStack.size() == 2)
     {
@@ -403,42 +404,42 @@ void UI::select(MenuState& state)
         {
             if (selectedText == DIFFICULTY_EASY)
             {
-                state.difficultyLevel = DIFFICULTY_EASY;
-                state.V = 1; state.P = 2; state.L = 1;
+                state.setDifficultyLevel(DIFFICULTY_EASY);
+                state.setV(1); state.setP(2); state.setL(1);
             }
             else if (selectedText == DIFFICULTY_EASIER_THAN_MEDIUM)
             {
-                state.difficultyLevel = DIFFICULTY_EASIER_THAN_MEDIUM;
-                state.V = 2; state.P = 4; state.L = 1;
+                state.setDifficultyLevel(DIFFICULTY_EASIER_THAN_MEDIUM);
+                state.setV(2); state.setP(4); state.setL(1);
             }
             else if (selectedText == DIFFICULTY_MEDIUM)
             {
-                state.difficultyLevel = DIFFICULTY_MEDIUM;
-                state.V = 3; state.P = 6; state.L = 2;
+                state.setDifficultyLevel(DIFFICULTY_MEDIUM);
+                state.setV(3); state.setP(6); state.setL(2);
             }
             else if (selectedText == DIFFICULTY_EASIER_THAN_HARD)
             {
-                state.difficultyLevel = DIFFICULTY_EASIER_THAN_HARD;
-                state.V = 4; state.P = 8; state.L = 2;
+                state.setDifficultyLevel(DIFFICULTY_EASIER_THAN_HARD);
+                state.setV(4); state.setP(8); state.setL(2);
             }
             else if (selectedText == DIFFICULTY_HARD)
             {
-                state.difficultyLevel = DIFFICULTY_HARD;
-                state.V = 5; state.P = 10; state.L = 3;
+                state.setDifficultyLevel(DIFFICULTY_HARD);
+                state.setV(5); state.setP(10); state.setL(3);
             }
             
             if (firstItemText == DIFFICULTY_EASY || firstItemText == DIFFICULTY_MEDIUM)
             {
                 menuStack.pop_back();
-                state.selectedIndex = 1;
+                state.setSelectedIndex(1);
             }
         }
         else if (firstItemText == SETTINGS_SOUND || firstItemText == SETTINGS_MUSIC)
         {
             if (selectedText == SETTINGS_SOUND)
-                state.soundEnabled = !state.soundEnabled;
+                state.setSoundEnabled(!state.getSoundEnabled());
             else if (selectedText == SETTINGS_MUSIC)
-                state.musicEnabled = !state.musicEnabled;
+                state.setMusicEnabled(!state.getMusicEnabled());
         }
     }
 }
