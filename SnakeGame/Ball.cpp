@@ -5,11 +5,12 @@ namespace SnakeGame
 {
 
 Ball::Ball()
-    : radius(CELL_SIZE),
+    : GameObject(),
+      radius(CELL_SIZE),
       speed(300.0f),
-      position(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 2 * CELL_SIZE - 10.0f),
       velocity(speed * 0.5f, -speed * 0.8660254f)
 {
+    position = sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 2 * CELL_SIZE - 10.0f);
     initializeShape();
 }
 
@@ -21,11 +22,21 @@ void Ball::initializeShape()
     shape.setFillColor(sf::Color::White);
 }
 
-void Ball::update(float deltaTime)
+void Ball::update(float deltaTime, const sf::RenderWindow* window)
 {
     position.x += velocity.x * deltaTime;
     position.y += velocity.y * deltaTime;
     shape.setPosition(position);
+}
+
+void Ball::draw(sf::RenderWindow& window)
+{
+    window.draw(shape);
+}
+
+sf::FloatRect Ball::getBounds() const
+{
+    return shape.getGlobalBounds();
 }
 
 } // namespace SnakeGame
