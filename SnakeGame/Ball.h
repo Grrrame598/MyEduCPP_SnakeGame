@@ -6,7 +6,6 @@
 namespace SnakeGame
 {
 
-// Класс для управления шариком
 class Ball : public GameObject
 {
 public:
@@ -14,6 +13,14 @@ public:
     void update(float deltaTime, const sf::RenderWindow* window = nullptr) override;
     void draw(sf::RenderWindow& window) override;
     sf::FloatRect getBounds() const override;
+    
+    float getRadius() const { return radius; }
+    sf::Vector2f getCenter() const;
+    void reflectX();  // Отражение по оси X (горизонтальное)
+    void reflectY();  // Отражение по оси Y (вертикальное)
+    sf::Vector2f getVelocity() const { return velocity; }
+    void setVelocityX(float vx);
+    void setVelocity(const sf::Vector2f& v);
 
 private:
     sf::CircleShape shape;

@@ -6,7 +6,6 @@
 namespace SnakeGame
 {
 
-// Класс для управления платформой
 class Paddle : public GameObject
 {
 public:
@@ -15,12 +14,15 @@ public:
     void draw(sf::RenderWindow& window) override;
     sf::Vector2f getSize() const;
     sf::FloatRect getBounds() const override;
+    float getVelocityX() const { return currentVelocityX; }  // Текущая скорость платформы по X
 
 private:
     sf::RectangleShape shape;
     float width;
     float height;
     float speed;
+    float currentVelocityX;
+    sf::Vector2i previousMousePos;
     
     void initializeShape();
 };

@@ -7,7 +7,7 @@ namespace SnakeGame
 {
 
 // Forward declaration (чтобы избежать циклических зависимостей)
-struct MenuState;
+class MenuState;
 
 // Класс для управления всеми звуками и музыкой в игре
 class SoundManager

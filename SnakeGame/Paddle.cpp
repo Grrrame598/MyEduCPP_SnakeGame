@@ -8,9 +8,11 @@ Paddle::Paddle()
     : GameObject(),
       width(3 * CELL_SIZE),
       height(1 * CELL_SIZE),
-      speed(200.0f)
+      speed(600.0f),
+      currentVelocityX(0.0f),
+      previousMousePos(-1, -1)
 {
-    position = sf::Vector2f((SCREEN_WIDTH - 3 * CELL_SIZE) / 2.0f, SCREEN_HEIGHT - 1 * CELL_SIZE - 10.0f);
+    position = sf::Vector2f((SCREEN_WIDTH - 3 * CELL_SIZE) / 2.0f, SCREEN_HEIGHT - 1 * CELL_SIZE - 10.0f - 80.0f);
     initializeShape();
 }
 
@@ -23,30 +25,43 @@ void Paddle::initializeShape()
 
 void Paddle::update(float deltaTime, const sf::RenderWindow* window)
 {
-    bool keyboardUsed = false;
+    float previousX = position.x;
+    currentVelocityX = 0.0f;
     
-    // Проверяем клавиатуру (имеет приоритет)
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-    {
-        position.x -= speed * deltaTime;
-        keyboardUsed = true;
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-    {
-        position.x += speed * deltaTime;
-        keyboardUsed = true;
-    }
+    bool keyboardUsed = sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || 
+                        sf::Keyboard::isKeyPressed(sf::Keyboard::Right);
     
-    // Если клавиатура не используется и есть окно - используем мышь
-    if (!keyboardUsed && window)
+    if (keyboardUsed)
     {
-        sf::Vector2i mousePosInt = sf::Mouse::getPosition(*window);
-        float mouseX = static_cast<float>(mousePosInt.x);
-        
-        if (mouseX >= 0.0f && mouseX <= static_cast<float>(SCREEN_WIDTH))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         {
+            currentVelocityX = -speed;
+            position.x += currentVelocityX * deltaTime;
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        {
+            currentVelocityX = speed;
+            position.x += currentVelocityX * deltaTime;
+        }
+        previousMousePos = sf::Vector2i(-1, -1);
+    }
+    else if (window != nullptr)
+    {
+        sf::Vector2i currentMousePos = sf::Mouse::getPosition(*window);
+        
+        if (previousMousePos.x != -1 && 
+            (currentMousePos.x != previousMousePos.x || currentMousePos.y != previousMousePos.y))
+        {
+            float mouseX = static_cast<float>(currentMousePos.x);
             position.x = mouseX - width / 2.0f;
         }
+        
+        previousMousePos = currentMousePos;
+    }
+    
+    if (deltaTime > 0.0f)
+    {
+        currentVelocityX = (position.x - previousX) / deltaTime;
     }
     
     if (position.x < 0.0f)

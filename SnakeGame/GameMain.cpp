@@ -10,7 +10,6 @@
 #include "HighScoreManager.h"
 #include "GameStateManager.h"
 
-// Определение глобального объекта в namespace SnakeGame (объявление в GameStateManager.h через extern)
 namespace SnakeGame {
     GameStateManager gameStateManager;
 }
@@ -36,6 +35,9 @@ int main()
 	sf::Clock delayTimer;
 	sf::Clock frameClock;
 	Game game;
+	
+	static GameState previousState = GameState::MENU;
+	static GameState stateBeforeWaiting = GameState::MENU;
 	
 	while (window.isOpen())
 	{
@@ -101,6 +103,18 @@ int main()
 						ui.selectPopupMenu(menuState, gameOverMenuItems, 2);
 					}
 				}
+				else if (gameStateManager.getCurrentState() == GameState::VICTORY)
+				{
+					if (event.key.code == sf::Keyboard::W || event.key.code == sf::Keyboard::Up)
+						ui.moveUp(menuState);
+					else if (event.key.code == sf::Keyboard::S || event.key.code == sf::Keyboard::Down)
+						ui.moveDown(menuState);
+					else if (event.key.code == sf::Keyboard::Enter)
+					{
+						const std::string victoryMenuItems[2] = {VICTORY_START_GAME, VICTORY_TO_MENU};
+						ui.selectPopupMenu(menuState, victoryMenuItems, 2);
+					}
+				}
 			else if (gameStateManager.getCurrentState() == GameState::HIGH_SCORES)
 			{
 				if (event.key.code == sf::Keyboard::B || event.key.code == sf::Keyboard::Escape)
@@ -109,58 +123,8 @@ int main()
 					menuState.setSelectedIndex(0);
 				}
 				}
-				else if (gameStateManager.getCurrentState() == GameState::NAME_INPUT)
-				{
-					if (!ui.getIsEnteringName())
-					{
-						if (event.key.code == sf::Keyboard::W || event.key.code == sf::Keyboard::Up)
-							ui.moveUp(menuState);
-						else if (event.key.code == sf::Keyboard::S || event.key.code == sf::Keyboard::Down)
-							ui.moveDown(menuState);
-					else if (event.key.code == sf::Keyboard::Enter)
-					{
-						int selectedOption = menuState.getSelectedIndex();
-						ui.selectNameInputOption(menuState);
-						if (selectedOption == 0 && gameStateManager.getCurrentState() == GameState::GAME_OVER)
-							{
-								highScoreManager.addScore("XYZ", game.getScore());
-								highScoreManager.saveHighScores();
-								ui.resetNameInput();
-							}
-						}
-					}
-					else
-					{
-						if (event.key.code >= sf::Keyboard::A && event.key.code <= sf::Keyboard::Z)
-						{
-							char c = 'A' + (event.key.code - sf::Keyboard::A);
-							ui.addCharToName(c);
-						}
-						else if (event.key.code >= sf::Keyboard::Num0 && event.key.code <= sf::Keyboard::Num9)
-						{
-							char c = '0' + (event.key.code - sf::Keyboard::Num0);
-							ui.addCharToName(c);
-						}
-						else if (event.key.code == sf::Keyboard::Backspace)
-							ui.removeLastCharFromName();
-						else if (event.key.code == sf::Keyboard::Enter)
-						{
-							highScoreManager.addScore(ui.getCurrentPlayerName(), game.getScore());
-							highScoreManager.saveHighScores();
-							gameStateManager.setState(GameState::GAME_OVER);
-							menuState.setSelectedIndex(0);
-							ui.resetNameInput();
-						}
-					}
-				}
-
 			}
 		}
-		
-		// Переходы между состояниями
-		static GameState previousState = GameState::MENU;
-		static GameState stateBeforeWaiting = GameState::MENU;
-		
 		if (gameStateManager.getCurrentState() == GameState::WAITING && previousState != GameState::WAITING)
 		{
 			stateBeforeWaiting = previousState;
@@ -170,11 +134,26 @@ int main()
 		if (previousState == GameState::GAME && gameStateManager.getCurrentState() != GameState::GAME)
 			soundManager.stopBackgroundMusic();
 		
+		// Проверка условий окончания игры
+		if (gameStateManager.getCurrentState() == GameState::GAME)
+		{
+			if (game.isVictory())
+			{
+				gameStateManager.setState(GameState::VICTORY);
+			}
+			else if (game.isGameOver())
+			{
+				gameStateManager.setState(GameState::GAME_OVER);
+			}
+		}
 		if (previousState == GameState::GAME && gameStateManager.getCurrentState() == GameState::GAME_OVER)
 		{
 			soundManager.playSessionEnd();
-			if (highScoreManager.isHighScore(game.getScore(), Y))
-				gameStateManager.setState(GameState::NAME_INPUT);
+		}
+		
+		if (previousState == GameState::GAME && gameStateManager.getCurrentState() == GameState::VICTORY)
+		{
+			soundManager.playSessionEnd();
 		}
 		
 		static bool previousMusicEnabled = true;
@@ -184,31 +163,34 @@ int main()
 		
 		previousState = gameStateManager.getCurrentState();
 
-		// Обновление игры
 		switch (gameStateManager.getCurrentState())
 		{
 		case GameState::WAITING:
 		{
+			// Ожидание с обратным отсчетом перед стартом игры
 			float remainingSeconds = menuState.getT() - delayTimer.getElapsedTime().asSeconds();
 			if (remainingSeconds < -0.2f) 
 			{ 
 				gameStateManager.setState(GameState::GAME);
-				if (stateBeforeWaiting == GameState::MENU || stateBeforeWaiting == GameState::GAME_OVER)
+				// Перезапуск игры при старте из меню/геймовер/виктори
+				if (stateBeforeWaiting == GameState::MENU || stateBeforeWaiting == GameState::GAME_OVER || stateBeforeWaiting == GameState::VICTORY)
+				{
 					game.initialize(menuState.getP(), menuState.getV(), menuState.getL(), &soundManager);
+					game.restartGame();
 					soundManager.playBackgroundMusic();
 					frameClock.restart();
 				}
-				break;
 			}
-			case GameState::GAME:
+			break;
+		}
+		case GameState::GAME:
 			{
 				float deltaTime = frameClock.restart().asSeconds();
-				game.update(deltaTime);
+				game.update(deltaTime, &window);
 				break;
 			}
 		}
 
-		// Отрисовка
 		window.clear(sf::Color::Black);
 		
 		if (gameStateManager.getCurrentState() == GameState::MENU)
@@ -249,10 +231,10 @@ int main()
 			game.draw(window);
 			ui.drawGameOverMenu(window, menuState, game.getScore(), highScoreManager);
 		}
-		else if (gameStateManager.getCurrentState() == GameState::NAME_INPUT)
+		else if (gameStateManager.getCurrentState() == GameState::VICTORY)
 		{
 			game.draw(window);
-			ui.drawNameInputPopup(window, menuState);
+			ui.drawVictoryMenu(window, menuState);
 		}
 		else if (gameStateManager.getCurrentState() == GameState::HIGH_SCORES)
 		{

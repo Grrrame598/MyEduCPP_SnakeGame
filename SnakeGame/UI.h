@@ -30,6 +30,9 @@ const std::string PAUSE_EXIT_TO_MENU = "Exit to Menu";
 const std::string GAME_OVER_START_GAME = "Start game";
 const std::string GAME_OVER_TO_MENU = "To main menu";
 
+const std::string VICTORY_START_GAME = "Start game";
+const std::string VICTORY_TO_MENU = "To main menu";
+
 const std::string NAME_INPUT_TITLE = "Enter name";
 const std::string NAME_INPUT_NO = "No";
 const std::string NAME_INPUT_YES = "Yes";
@@ -91,6 +94,7 @@ public:
 	
 	void drawPauseMenu(sf::RenderWindow& window, const MenuState& state);
 	void drawGameOverMenu(sf::RenderWindow& window, const MenuState& state, int score, const HighScoreManager& highScoreManager);
+	void drawVictoryMenu(sf::RenderWindow& window, const MenuState& state);
 	void selectPopupMenu(MenuState& state, const std::string menuItems[], int itemCount);
 	
 	void drawCountdown(sf::RenderWindow& window, float remainingSeconds);
@@ -114,6 +118,7 @@ private:
 	std::vector<std::vector<MenuItem>> menuStack;
 	const std::string pauseMenuItems[2] = {PAUSE_CONTINUE, PAUSE_EXIT_TO_MENU};
 	const std::string gameOverMenuItems[2] = {GAME_OVER_START_GAME, GAME_OVER_TO_MENU};
+	const std::string victoryMenuItems[2] = {VICTORY_START_GAME, VICTORY_TO_MENU};
 	sf::Font font;
 	SoundManager* soundManager;
 	std::string currentPlayerName = "XYZ";

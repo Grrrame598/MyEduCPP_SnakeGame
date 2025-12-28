@@ -215,6 +215,45 @@ void UI::drawGameOverMenu(sf::RenderWindow& window, const MenuState& state, int 
     }
 }
 
+void UI::drawVictoryMenu(sf::RenderWindow& window, const MenuState& state)
+{
+    sf::RectangleShape overlay(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
+    overlay.setFillColor(sf::Color(0, 0, 0, 100));
+    window.draw(overlay);
+    
+    const float titleFontSize = 48.0f;
+    const float menuFontSize = 30.0f;
+    const float deltaY = 50.0f;
+    const float titleY = 200.0f;
+    const float menuStartY = 300.0f;
+    const float centerX = SCREEN_WIDTH / 2.0f;
+    
+    // Заголовок "Victory!"
+    sf::Text titleText;
+    titleText.setFont(font);
+    titleText.setString("Victory!");
+    titleText.setCharacterSize(static_cast<unsigned int>(titleFontSize));
+    titleText.setPosition(centerX, titleY);
+    titleText.setOrigin(titleText.getLocalBounds().width / 2, 0);
+    titleText.setFillColor(sf::Color::Yellow);
+    window.draw(titleText);
+
+    // Меню выбора
+    for (size_t i = 0; i < 2; i++)
+    {
+        sf::Text text;
+        text.setFont(font);
+        text.setString(victoryMenuItems[i]);
+        text.setCharacterSize(static_cast<unsigned int>(menuFontSize));
+        
+        float yPos = menuStartY + (i * deltaY);
+        text.setPosition(centerX, yPos);
+        text.setOrigin(text.getLocalBounds().width / 2, 0);
+        text.setFillColor(i == state.getSelectedIndex() ? sf::Color::Green : sf::Color::White);
+        window.draw(text);
+    }
+}
+
 void UI::drawCountdown(sf::RenderWindow& window, float remainingSeconds)
 {
     sf::Text text;
@@ -264,9 +303,9 @@ void UI::selectPopupMenu(MenuState& state, const std::string menuItems[], int it
     
     std::string selectedText = menuItems[state.getSelectedIndex()];
     
-    if (selectedText == PAUSE_CONTINUE || selectedText == GAME_OVER_START_GAME)
+    if (selectedText == PAUSE_CONTINUE || selectedText == GAME_OVER_START_GAME || selectedText == VICTORY_START_GAME)
         gameStateManager.setState(GameState::WAITING);
-    else if (selectedText == PAUSE_EXIT_TO_MENU || selectedText == GAME_OVER_TO_MENU)
+    else if (selectedText == PAUSE_EXIT_TO_MENU || selectedText == GAME_OVER_TO_MENU || selectedText == VICTORY_TO_MENU)
     {
         gameStateManager.setState(GameState::MENU);
         state.setSelectedIndex(0);
@@ -359,7 +398,8 @@ void UI::selectNameInputOption(MenuState& state)
     
     if (state.getSelectedIndex() == 0)
     {
-        gameStateManager.setState(GameState::GAME_OVER);
+        // Возвращаемся в предыдущее состояние (GAME_OVER или VICTORY)
+        // Состояние уже будет восстановлено в GameMain.cpp после сохранения имени
         state.setSelectedIndex(0);
     }
     else if (state.getSelectedIndex() == 1)
