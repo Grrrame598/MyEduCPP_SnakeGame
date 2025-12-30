@@ -78,5 +78,19 @@ public:
     int getHitsRemaining() const override;
 };
 
+// Блок с тремя ударами
+class TripleBlock : public Block
+{
+public:
+    TripleBlock(const sf::Vector2f& position);
+    void onHit() override;
+    bool isDestroyed() const override;
+    int getHitsRemaining() const override;
+
+private:
+    int currentHits;
+    void updateColor();
+};
+
 } // namespace SnakeGame
 

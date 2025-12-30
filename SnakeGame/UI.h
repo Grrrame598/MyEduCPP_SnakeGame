@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "Application.h"
 
 namespace SnakeGame
 {
@@ -82,15 +83,21 @@ public:
 	void setDifficultyLevel(const std::string& value) { difficultyLevel = value; }
 };
 
-class UI
+class UI : public Application
 {
 public:
 	UI(SoundManager* soundManager);
+	void update(float deltaTime, const sf::RenderWindow* window = nullptr) override;
+	void draw(sf::RenderWindow& window) override;
+	void handleInput(sf::Keyboard::Key key) override;
+	
+	MenuState& getMenuState() { return menuState; }
+	void setSoundManager(SoundManager* soundManager) { this->soundManager = soundManager; }
 	void initializeMainMenu();
 	void openDifficultyMenu();
-	void openSettingsMenu();
+    void openSettingsMenu();
 	void goBack(MenuState& state);
-	void draw(sf::RenderWindow& window, const MenuState& state);
+	void drawMenu(sf::RenderWindow& window, const MenuState& state);
 	
 	void drawPauseMenu(sf::RenderWindow& window, const MenuState& state);
 	void drawGameOverMenu(sf::RenderWindow& window, const MenuState& state, int score, const HighScoreManager& highScoreManager);
@@ -115,6 +122,7 @@ public:
 	void drawControlsHint(sf::RenderWindow& window) const;
 	
 private:
+	MenuState menuState;
 	std::vector<std::vector<MenuItem>> menuStack;
 	const std::string pauseMenuItems[2] = {PAUSE_CONTINUE, PAUSE_EXIT_TO_MENU};
 	const std::string gameOverMenuItems[2] = {GAME_OVER_START_GAME, GAME_OVER_TO_MENU};

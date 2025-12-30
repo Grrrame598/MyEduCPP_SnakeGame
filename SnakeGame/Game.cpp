@@ -82,11 +82,23 @@ void Game::initializeBlocks()
             sf::Vector2f position(x, y);
             
             if (row == 0)
-                blocks.push_back(std::make_unique<SimpleBlock>(position));
+            {
+                // Нижний ряд: блоки, которые ломаются с 3 ударов
+                blocks.push_back(std::make_unique<TripleBlock>(position));
+            }
             else if (row == 1)
-                blocks.push_back(std::make_unique<StrongBlock>(position, 2));
+            {
+                // Второй ряд: по 2 неубиваемых блока слева и справа, остальные - крепкие (2 удара)
+                if (col < 2 || col >= COLS - 2)
+                    blocks.push_back(std::make_unique<UnbreakableBlock>(position));
+                else
+                    blocks.push_back(std::make_unique<StrongBlock>(position, 2));
+            }
             else if (row == 2)
-                blocks.push_back(std::make_unique<BonusBlock>(position));
+            {
+                // Верхний ряд: обычные блоки (ломаются с 1 удара)
+                blocks.push_back(std::make_unique<SimpleBlock>(position));
+            }
         }
     }
 }
@@ -115,6 +127,9 @@ void Game::checkBallPaddleCollision()
     
     if (ballBounds.intersects(paddleBounds))
     {
+        if (soundManager)
+            soundManager->playAppleEat();
+            
         float ballRight = ballBounds.left + ballBounds.width;
         float ballBottom = ballBounds.top + ballBounds.height;
         
@@ -204,13 +219,25 @@ void Game::checkBallScreenCollisions()
     sf::FloatRect ballBounds = ball.getBounds();
     
     if (ballBounds.left < 0)
+    {
         ball.reflectX();
+        if (soundManager)
+            soundManager->playAppleEat();
+    }
     
     if (ballBounds.left + ballBounds.width > SCREEN_WIDTH)
+    {
         ball.reflectX();
+        if (soundManager)
+            soundManager->playAppleEat();
+    }
     
     if (ballBounds.top < 0)
+    {
         ball.reflectY();
+        if (soundManager)
+            soundManager->playAppleEat();
+    }
 }
 
 void Game::checkBallBlocksCollisions(float deltaTime)
@@ -235,17 +262,50 @@ void Game::checkBallBlocksCollisions(float deltaTime)
         
         if (ballBounds.intersects(blockBounds))
         {
-            float x1 = blockBounds.left;
-            float x2 = blockBounds.left + blockBounds.width;
+            if (soundManager)
+                soundManager->playAppleEat();
             
-            if (X >= x1 && X <= x1 + deltaX + epsilon)
+            // Упрощенный метод определения стороны столкновения (только правая и нижняя граница шарика)
+            float ballRight = ballBounds.left + ballBounds.width;
+            float ballBottom = ballBounds.top + ballBounds.height;
+            
+            float blockLeft = blockBounds.left;
+            float blockRight = blockBounds.left + blockBounds.width;
+            float blockTop = blockBounds.top;
+            float blockBottom = blockBounds.top + blockBounds.height;
+            
+            // Вычисление перекрытий (упрощенный способ)
+            float overlapWidth = 0.0f;
+            if (ballRight > blockLeft && ballRight < blockRight)
+            {
+                overlapWidth = ballRight - blockLeft;
+            }
+            else if (ballRight >= blockRight)
+            {
+                overlapWidth = blockRight - (ballRight - ballBounds.width);
+            }
+            
+            float overlapHeight = 0.0f;
+            if (ballBottom > blockTop && ballBottom < blockBottom)
+            {
+                overlapHeight = ballBottom - blockTop;
+            }
+            else if (ballBottom >= blockBottom)
+            {
+                overlapHeight = blockBottom - (ballBottom - ballBounds.height);
+            }
+            
+            // Определение стороны столкновения по минимальному перекрытию
+            if (overlapWidth < overlapHeight)
+            {
+                // Боковое столкновение
                 ball.reflectX();
-            else if (X >= x2 + D - deltaX - epsilon && X <= x2 + D)
-                ball.reflectX();
-            else if (X >= x1 + deltaX + epsilon && X <= x2 - deltaX - epsilon + D)
-                ball.reflectY();
+            }
             else
+            {
+                // Вертикальное столкновение
                 ball.reflectY();
+            }
             
             (*it)->onHit();
             

@@ -12,74 +12,96 @@ UI::UI(SoundManager* soundManager)
     this->soundManager = soundManager;
 }
 
+void UI::update(float deltaTime, const sf::RenderWindow* window)
+{
+    // Menu doesn't require continuous updates
+}
+
+void UI::draw(sf::RenderWindow& window)
+{
+    drawMenu(window, menuState);
+}
+
+void UI::handleInput(sf::Keyboard::Key key)
+{
+    if (key == sf::Keyboard::W || key == sf::Keyboard::Up)
+        moveUp(menuState);
+    else if (key == sf::Keyboard::S || key == sf::Keyboard::Down)
+        moveDown(menuState);
+    else if (key == sf::Keyboard::Enter)
+        select(menuState);
+    else if (key == sf::Keyboard::B || key == sf::Keyboard::Escape)
+        goBack(menuState);
+}
+
 void UI::initializeMainMenu()
 {
     assert(font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
 
-    std::vector<MenuItem> mainMenu;
-    MenuItem item1;
+	std::vector<MenuItem> mainMenu;
+	MenuItem item1;
     item1.text = MENU_START_GAME;
-    mainMenu.push_back(item1);
-
-    MenuItem item2;
+	mainMenu.push_back(item1);
+	
+	MenuItem item2;
     item2.text = MENU_DIFFICULTY;
-    mainMenu.push_back(item2);
-
-    MenuItem item3;
+	mainMenu.push_back(item2);
+	
+	MenuItem item3;
     item3.text = MENU_HIGH_SCORES;
-    mainMenu.push_back(item3);
-
-    MenuItem item4;
+	mainMenu.push_back(item3);
+	
+	MenuItem item4;
     item4.text = MENU_SETTINGS;
-    mainMenu.push_back(item4);
-
-    MenuItem item5;
+	mainMenu.push_back(item4);
+	
+	MenuItem item5;
     item5.text = MENU_EXIT;
-    mainMenu.push_back(item5);
-
-    menuStack.push_back(mainMenu);
+	mainMenu.push_back(item5);
+	
+	menuStack.push_back(mainMenu);
 }
-
+	
 void UI::openDifficultyMenu()
 {
-    std::vector<MenuItem> difficultyMenu;
-
-    MenuItem diff1;
+	std::vector<MenuItem> difficultyMenu;
+	
+	MenuItem diff1;
     diff1.text = DIFFICULTY_EASY;
-    difficultyMenu.push_back(diff1);
-
-    MenuItem diff2;
+	difficultyMenu.push_back(diff1);
+	
+	MenuItem diff2;
     diff2.text = DIFFICULTY_EASIER_THAN_MEDIUM;
-    difficultyMenu.push_back(diff2);
-
-    MenuItem diff3;
+	difficultyMenu.push_back(diff2);
+	
+	MenuItem diff3;
     diff3.text = DIFFICULTY_MEDIUM;
-    difficultyMenu.push_back(diff3);
-
-    MenuItem diff4;
+	difficultyMenu.push_back(diff3);
+	
+	MenuItem diff4;
     diff4.text = DIFFICULTY_EASIER_THAN_HARD;
-    difficultyMenu.push_back(diff4);
-
-    MenuItem diff5;
+	difficultyMenu.push_back(diff4);
+	
+	MenuItem diff5;
     diff5.text = DIFFICULTY_HARD;
-    difficultyMenu.push_back(diff5);
-
-    menuStack.push_back(difficultyMenu);
+	difficultyMenu.push_back(diff5);
+	
+	menuStack.push_back(difficultyMenu);
 }
 
 void UI::openSettingsMenu()
 {
-    std::vector<MenuItem> settingsMenu;
-
-    MenuItem set1;
+	std::vector<MenuItem> settingsMenu;
+	
+	MenuItem set1;
     set1.text = SETTINGS_SOUND;
-    settingsMenu.push_back(set1);
-
-    MenuItem set2;
+	settingsMenu.push_back(set1);
+	
+	MenuItem set2;
     set2.text = SETTINGS_MUSIC;
-    settingsMenu.push_back(set2);
-
-    menuStack.push_back(settingsMenu);
+	settingsMenu.push_back(set2);
+	
+	menuStack.push_back(settingsMenu);
 }
 
 void UI::goBack(MenuState& state)
@@ -93,7 +115,7 @@ void UI::goBack(MenuState& state)
     }
 }
 
-void UI::draw(sf::RenderWindow& window, const MenuState& state)
+void UI::drawMenu(sf::RenderWindow& window, const MenuState& state)
 {
     const auto& currentMenu = menuStack.back();
     

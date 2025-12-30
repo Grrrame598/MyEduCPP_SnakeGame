@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <memory>
+#include "Application.h"
 #include "Block.h"
 #include "Ball.h"
 #include "Paddle.h"
@@ -11,13 +12,13 @@ namespace SnakeGame
 
 class SoundManager;
 
-class Game
+class Game : public Application
 {
 public:
     void initialize(int P, int V, int L, SoundManager* soundManager);
-    void update(float deltaTime, const sf::RenderWindow* window = nullptr);
-    void draw(sf::RenderWindow& window);
-    void handleInput(sf::Keyboard::Key key);
+    void update(float deltaTime, const sf::RenderWindow* window = nullptr) override;
+    void draw(sf::RenderWindow& window) override;
+    void handleInput(sf::Keyboard::Key key) override;
     int getNumEatenApples() const { return numEatenApples; }
     int getScore() const { return score; }
     bool isGameOver() const;  // Проверка: шарик упал за нижнюю границу

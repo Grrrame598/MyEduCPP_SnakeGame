@@ -24,10 +24,11 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Snake game!");
 	window.setKeyRepeatEnabled(false);
 	
-	MenuState menuState;
-	SoundManager soundManager(&menuState);
-	UI ui(&soundManager);
+	UI ui(nullptr);
 	ui.initializeMainMenu();
+	MenuState& menuState = ui.getMenuState();
+	SoundManager soundManager(&menuState);
+	ui.setSoundManager(&soundManager);
 	
 	HighScoreManager highScoreManager;
 	highScoreManager.loadHighScores();
@@ -60,14 +61,7 @@ int main()
 			{
 				if (gameStateManager.getCurrentState() == GameState::MENU)
 				{
-					if (event.key.code == sf::Keyboard::W || event.key.code == sf::Keyboard::Up)
-						ui.moveUp(menuState);
-					else if (event.key.code == sf::Keyboard::S || event.key.code == sf::Keyboard::Down)
-						ui.moveDown(menuState);
-					else if (event.key.code == sf::Keyboard::Enter)
-						ui.select(menuState);
-					else if (event.key.code == sf::Keyboard::B || event.key.code == sf::Keyboard::Escape)
-						ui.goBack(menuState);
+					ui.handleInput(event.key.code);
 				}
 				else if (gameStateManager.getCurrentState() == GameState::PAUSE)
 				{
@@ -157,8 +151,13 @@ int main()
 		}
 		
 		static bool previousMusicEnabled = true;
-		if (!menuState.getMusicEnabled() && previousMusicEnabled != menuState.getMusicEnabled())
-			soundManager.stopBackgroundMusic();
+		if (menuState.getMusicEnabled() != previousMusicEnabled)
+		{
+			if (!menuState.getMusicEnabled())
+				soundManager.stopBackgroundMusic();
+			else if (gameStateManager.getCurrentState() == GameState::GAME)
+				soundManager.playBackgroundMusic();
+		}
 		previousMusicEnabled = menuState.getMusicEnabled();
 		
 		previousState = gameStateManager.getCurrentState();
@@ -195,7 +194,7 @@ int main()
 		
 		if (gameStateManager.getCurrentState() == GameState::MENU)
 		{
-			ui.draw(window, menuState);
+			ui.draw(window);
 			ui.drawControlsHint(window);
 		}
 		else if (gameStateManager.getCurrentState() == GameState::WAITING)

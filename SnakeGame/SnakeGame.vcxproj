@@ -182,6 +182,7 @@
     <ClInclude Include="Snake.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="UI.h" />
+    <ClInclude Include="Application.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Paddle.h" />
     <ClInclude Include="Ball.h" />

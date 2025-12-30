@@ -121,7 +121,7 @@ int BonusBlock::getHitsRemaining() const
 UnbreakableBlock::UnbreakableBlock(const sf::Vector2f& position)
     : Block(position)
 {
-    shape.setFillColor(sf::Color::Cyan);
+    shape.setFillColor(sf::Color(128, 128, 128));  // Серый цвет
 }
 
 void UnbreakableBlock::onHit()
@@ -136,6 +136,56 @@ bool UnbreakableBlock::isDestroyed() const
 int UnbreakableBlock::getHitsRemaining() const
 {
     return -1;
+}
+
+TripleBlock::TripleBlock(const sf::Vector2f& position)
+    : Block(position),
+      currentHits(0)
+{
+    updateColor();
+}
+
+void TripleBlock::onHit()
+{
+    currentHits++;
+    updateColor();
+}
+
+bool TripleBlock::isDestroyed() const
+{
+    return currentHits >= 3;
+}
+
+int TripleBlock::getHitsRemaining() const
+{
+    int remaining = 3 - currentHits;
+    if (remaining > 0)
+        return remaining;
+    else
+        return 0;
+}
+
+void TripleBlock::updateColor()
+{
+    // Сиреневые оттенки: от темного к светлому при каждом попадании
+    // hit 0: темно-сиреневый (138, 43, 226) - Indigo
+    // hit 1: средний сиреневый (186, 85, 211) - MediumOrchid
+    // hit 2: светлый сиреневый (221, 160, 221) - Plum
+    switch (currentHits)
+    {
+    case 0:
+        shape.setFillColor(sf::Color(138, 43, 226));  // Темно-сиреневый
+        break;
+    case 1:
+        shape.setFillColor(sf::Color(186, 85, 211));  // Средний сиреневый
+        break;
+    case 2:
+        shape.setFillColor(sf::Color(221, 160, 221)); // Светлый сиреневый
+        break;
+    default:
+        shape.setFillColor(sf::Color(221, 160, 221)); // Светлый сиреневый
+        break;
+    }
 }
 
 } // namespace SnakeGame
