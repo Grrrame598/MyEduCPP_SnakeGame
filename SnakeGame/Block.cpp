@@ -1,7 +1,7 @@
 #include "Block.h"
 #include "Constants.h"
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 
 Block::Block(const sf::Vector2f& position)
@@ -18,7 +18,7 @@ void Block::initializeShape()
     shape.setSize(sf::Vector2f(width, height));
     shape.setPosition(position);
     shape.setFillColor(sf::Color::White);
-    shape.setOutlineThickness(1.0f);
+    shape.setOutlineThickness(BLOCK_OUTLINE_THICKNESS);
     shape.setOutlineColor(sf::Color(0, 0, 0, 128));
 }
 
@@ -41,7 +41,8 @@ SimpleBlock::SimpleBlock(const sf::Vector2f& position)
     : Block(position),
       destroyed(false)
 {
-    shape.setFillColor(sf::Color::Red);
+    // Устанавливаем цвет после инициализации формы в базовом классе
+    shape.setFillColor(SIMPLE_BLOCK_COLOR);
 }
 
 void SimpleBlock::onHit()
@@ -67,7 +68,7 @@ StrongBlock::StrongBlock(const sf::Vector2f& position, int hitsRequired)
       hitsRequired(hitsRequired),
       currentHits(0)
 {
-    shape.setFillColor(sf::Color(255, 165, 0));  
+    shape.setFillColor(STRONG_BLOCK_COLOR);  
 }
 
 void StrongBlock::onHit()
@@ -75,7 +76,7 @@ void StrongBlock::onHit()
     currentHits++;
     if (currentHits == 1)
     {
-        shape.setFillColor(sf::Color(255, 200, 100));
+        shape.setFillColor(STRONG_BLOCK_DAMAGED_COLOR);
     }
 }
 
@@ -97,7 +98,7 @@ BonusBlock::BonusBlock(const sf::Vector2f& position)
     : Block(position),
       destroyed(false)
 {
-    shape.setFillColor(sf::Color::Green);
+    shape.setFillColor(BONUS_BLOCK_COLOR);
 }
 
 void BonusBlock::onHit()
@@ -121,7 +122,7 @@ int BonusBlock::getHitsRemaining() const
 UnbreakableBlock::UnbreakableBlock(const sf::Vector2f& position)
     : Block(position)
 {
-    shape.setFillColor(sf::Color(128, 128, 128));  // Серый цвет
+    shape.setFillColor(UNBREAKABLE_BLOCK_COLOR);
 }
 
 void UnbreakableBlock::onHit()
@@ -174,19 +175,19 @@ void TripleBlock::updateColor()
     switch (currentHits)
     {
     case 0:
-        shape.setFillColor(sf::Color(138, 43, 226));  // Темно-сиреневый
+        shape.setFillColor(TRIPLE_BLOCK_COLOR_DARK);
         break;
     case 1:
-        shape.setFillColor(sf::Color(186, 85, 211));  // Средний сиреневый
+        shape.setFillColor(TRIPLE_BLOCK_COLOR_MEDIUM);
         break;
     case 2:
-        shape.setFillColor(sf::Color(221, 160, 221)); // Светлый сиреневый
+        shape.setFillColor(TRIPLE_BLOCK_COLOR_LIGHT);
         break;
     default:
-        shape.setFillColor(sf::Color(221, 160, 221)); // Светлый сиреневый
+        shape.setFillColor(TRIPLE_BLOCK_COLOR_LIGHT);
         break;
     }
 }
 
-} // namespace SnakeGame
+} // namespace ArkanoidGame
 

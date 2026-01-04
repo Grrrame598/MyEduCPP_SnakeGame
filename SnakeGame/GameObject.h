@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Constants.h"
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 
 class GameObject
@@ -20,5 +20,5 @@ protected:
     sf::Vector2f position;
 };
 
-} // namespace SnakeGame
+} // namespace ArkanoidGame
 

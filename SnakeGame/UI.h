@@ -4,23 +4,16 @@
 #include <SFML/Graphics.hpp>
 #include "Application.h"
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 
 class SoundManager;
 class HighScoreManager;
 
 const std::string MENU_START_GAME = "Start Game";
-const std::string MENU_DIFFICULTY = "Difficulty";
 const std::string MENU_HIGH_SCORES = "High Scores";
 const std::string MENU_SETTINGS = "Settings";
 const std::string MENU_EXIT = "Exit";
-
-const std::string DIFFICULTY_EASY = "Easy";
-const std::string DIFFICULTY_EASIER_THAN_MEDIUM = "Easier Than Medium";
-const std::string DIFFICULTY_MEDIUM = "Medium";
-const std::string DIFFICULTY_EASIER_THAN_HARD = "Easier Than Hard";
-const std::string DIFFICULTY_HARD = "Hard";
 
 const std::string SETTINGS_SOUND = "Sound";
 const std::string SETTINGS_MUSIC = "Music";
@@ -52,12 +45,7 @@ private:
 	bool soundEnabled = true;
 	bool musicEnabled = true;
 	int selectedIndex = 0;
-	
-	int V = 1;
-	int P = 2;
-	int L = 1;
 	float T = 3.0f;
-	std::string difficultyLevel = DIFFICULTY_EASY;
 
 public:
 	MenuState() = default;
@@ -66,21 +54,13 @@ public:
 	bool getSoundEnabled() const { return soundEnabled; }
 	bool getMusicEnabled() const { return musicEnabled; }
 	int getSelectedIndex() const { return selectedIndex; }
-	int getV() const { return V; }
-	int getP() const { return P; }
-	int getL() const { return L; }
 	float getT() const { return T; }
-	const std::string& getDifficultyLevel() const { return difficultyLevel; }
 	
 	// Setters
 	void setSoundEnabled(bool value) { soundEnabled = value; }
 	void setMusicEnabled(bool value) { musicEnabled = value; }
 	void setSelectedIndex(int value) { selectedIndex = value; }
-	void setV(int value) { V = value; }
-	void setP(int value) { P = value; }
-	void setL(int value) { L = value; }
 	void setT(float value) { T = value; }
-	void setDifficultyLevel(const std::string& value) { difficultyLevel = value; }
 };
 
 class UI : public Application
@@ -94,7 +74,6 @@ public:
 	MenuState& getMenuState() { return menuState; }
 	void setSoundManager(SoundManager* soundManager) { this->soundManager = soundManager; }
 	void initializeMainMenu();
-	void openDifficultyMenu();
     void openSettingsMenu();
 	void goBack(MenuState& state);
 	void drawMenu(sf::RenderWindow& window, const MenuState& state);
@@ -133,4 +112,4 @@ private:
 	bool isEnteringName = false;
 };
 
-} // namespace SnakeGame
+} // namespace ArkanoidGame

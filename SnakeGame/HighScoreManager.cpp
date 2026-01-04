@@ -5,7 +5,7 @@
 #include <sstream>   // Для std::istringstream
 #include <direct.h>  // Для _mkdir (Windows)
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 
 void HighScoreManager::saveHighScores()
@@ -168,4 +168,4 @@ void HighScoreManager::drawHighScoresTable(sf::RenderWindow& window, const sf::F
     }
 }
 
-} // namespace SnakeGame
+} // namespace ArkanoidGame

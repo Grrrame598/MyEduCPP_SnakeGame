@@ -3,7 +3,7 @@
 #include <string>
 #include "Constants.h"
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 
 // Forward declaration (чтобы избежать циклических зависимостей)
@@ -17,7 +17,7 @@ public:
     void playSessionEnd();  // Звук при окончании игры (GAME_OVER)
     void playBackgroundMusic();  // Фоновая музыка
     void stopBackgroundMusic();  // Остановка фоновой музыки
-    void playAppleEat();  // Звук поедания яблока
+    void playBlockHit();  // Звук удара по блоку
     void playMenuHover();  // Звук наведения в меню
     void playEnter();  // Звук нажатия Enter
     
@@ -26,13 +26,13 @@ private:
     MenuState* menuState;
     // Буферы для звуковых эффектов
     sf::SoundBuffer sessionEndBuffer;
-    sf::SoundBuffer appleEatBuffer;
+    sf::SoundBuffer blockHitBuffer;
     sf::SoundBuffer menuHoverBuffer;
     sf::SoundBuffer enterSoundBuffer;
     
     // Объекты для воспроизведения звуковых эффектов
     sf::Sound sessionEndSound;
-    sf::Sound appleEatSound;
+    sf::Sound blockHitSound;
     sf::Sound menuHoverSound;
     sf::Sound enterSound;
     
@@ -40,4 +40,4 @@ private:
     sf::Music backgroundMusic;
 };
 
-} // namespace SnakeGame
+} // namespace ArkanoidGame

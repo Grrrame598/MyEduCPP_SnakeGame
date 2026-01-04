@@ -3,7 +3,7 @@
 #include "Constants.h"
 #include "GameObject.h"
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 
 class Block : public GameObject
@@ -92,5 +92,5 @@ private:
     void updateColor();
 };
 
-} // namespace SnakeGame
+} // namespace ArkanoidGame
 

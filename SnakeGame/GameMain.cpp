@@ -10,18 +10,18 @@
 #include "HighScoreManager.h"
 #include "GameStateManager.h"
 
-namespace SnakeGame {
+namespace ArkanoidGame {
     GameStateManager gameStateManager;
 }
 
-using namespace SnakeGame;
+using namespace ArkanoidGame;
 
 int main()
 {
 	int seed = static_cast<int>(time(nullptr));
 	srand(seed);
 	
-	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Snake game!");
+	sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Arkanoid");
 	window.setKeyRepeatEnabled(false);
 	
 	UI ui(nullptr);
@@ -168,13 +168,13 @@ int main()
 		{
 			// Ожидание с обратным отсчетом перед стартом игры
 			float remainingSeconds = menuState.getT() - delayTimer.getElapsedTime().asSeconds();
-			if (remainingSeconds < -0.2f) 
+			if (remainingSeconds < GAME_START_DELAY) 
 			{ 
 				gameStateManager.setState(GameState::GAME);
 				// Перезапуск игры при старте из меню/геймовер/виктори
 				if (stateBeforeWaiting == GameState::MENU || stateBeforeWaiting == GameState::GAME_OVER || stateBeforeWaiting == GameState::VICTORY)
 				{
-					game.initialize(menuState.getP(), menuState.getV(), menuState.getL(), &soundManager);
+					game.initialize(&soundManager);
 					game.restartGame();
 					soundManager.playBackgroundMusic();
 					frameClock.restart();

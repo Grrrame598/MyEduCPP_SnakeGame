@@ -1,18 +1,17 @@
 #include "Paddle.h"
 #include "Constants.h"
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 
 Paddle::Paddle()
     : GameObject(),
-      width(3 * CELL_SIZE),
-      height(1 * CELL_SIZE),
-      speed(600.0f),
-      currentVelocityX(0.0f),
+      width(PADDLE_WIDTH_MULTIPLIER * CELL_SIZE),
+      height(PADDLE_HEIGHT),
+      speed(PADDLE_SPEED),
       previousMousePos(-1, -1)
 {
-    position = sf::Vector2f((SCREEN_WIDTH - 3 * CELL_SIZE) / 2.0f, SCREEN_HEIGHT - 1 * CELL_SIZE - 10.0f - 80.0f);
+    position = sf::Vector2f((SCREEN_WIDTH - PADDLE_WIDTH_MULTIPLIER * CELL_SIZE) / 2.0f, SCREEN_HEIGHT - PADDLE_HEIGHT - 10.0f - PADDLE_START_OFFSET_Y);
     initializeShape();
 }
 
@@ -25,23 +24,20 @@ void Paddle::initializeShape()
 
 void Paddle::update(float deltaTime, const sf::RenderWindow* window)
 {
-    float previousX = position.x;
-    currentVelocityX = 0.0f;
-    
     bool keyboardUsed = sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || 
                         sf::Keyboard::isKeyPressed(sf::Keyboard::Right);
+    
+    float oldX = position.x;
     
     if (keyboardUsed)
     {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         {
-            currentVelocityX = -speed;
-            position.x += currentVelocityX * deltaTime;
+            position.x -= speed * deltaTime;
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
         {
-            currentVelocityX = speed;
-            position.x += currentVelocityX * deltaTime;
+            position.x += speed * deltaTime;
         }
         previousMousePos = sf::Vector2i(-1, -1);
     }
@@ -59,10 +55,11 @@ void Paddle::update(float deltaTime, const sf::RenderWindow* window)
         previousMousePos = currentMousePos;
     }
     
+    // Обновляем скорость для передачи импульса шарику
     if (deltaTime > 0.0f)
-    {
-        currentVelocityX = (position.x - previousX) / deltaTime;
-    }
+        currentVelocityX = (position.x - oldX) / deltaTime;
+    else
+        currentVelocityX = 0.0f;
     
     if (position.x < 0.0f)
         position.x = 0.0f;
@@ -87,5 +84,5 @@ sf::FloatRect Paddle::getBounds() const
     return shape.getGlobalBounds();
 }
 
-} // namespace SnakeGame
+} // namespace ArkanoidGame
 

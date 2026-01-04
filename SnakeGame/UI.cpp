@@ -5,7 +5,7 @@
 #include "GameStateManager.h"
 #include <cassert>
 
-using namespace SnakeGame;
+using namespace ArkanoidGame;
 
 UI::UI(SoundManager* soundManager)
 {
@@ -44,49 +44,18 @@ void UI::initializeMainMenu()
 	mainMenu.push_back(item1);
 	
 	MenuItem item2;
-    item2.text = MENU_DIFFICULTY;
+    item2.text = MENU_HIGH_SCORES;
 	mainMenu.push_back(item2);
 	
 	MenuItem item3;
-    item3.text = MENU_HIGH_SCORES;
+    item3.text = MENU_SETTINGS;
 	mainMenu.push_back(item3);
 	
 	MenuItem item4;
-    item4.text = MENU_SETTINGS;
+    item4.text = MENU_EXIT;
 	mainMenu.push_back(item4);
 	
-	MenuItem item5;
-    item5.text = MENU_EXIT;
-	mainMenu.push_back(item5);
-	
 	menuStack.push_back(mainMenu);
-}
-	
-void UI::openDifficultyMenu()
-{
-	std::vector<MenuItem> difficultyMenu;
-	
-	MenuItem diff1;
-    diff1.text = DIFFICULTY_EASY;
-	difficultyMenu.push_back(diff1);
-	
-	MenuItem diff2;
-    diff2.text = DIFFICULTY_EASIER_THAN_MEDIUM;
-	difficultyMenu.push_back(diff2);
-	
-	MenuItem diff3;
-    diff3.text = DIFFICULTY_MEDIUM;
-	difficultyMenu.push_back(diff3);
-	
-	MenuItem diff4;
-    diff4.text = DIFFICULTY_EASIER_THAN_HARD;
-	difficultyMenu.push_back(diff4);
-	
-	MenuItem diff5;
-    diff5.text = DIFFICULTY_HARD;
-	difficultyMenu.push_back(diff5);
-	
-	menuStack.push_back(difficultyMenu);
 }
 
 void UI::openSettingsMenu()
@@ -155,7 +124,7 @@ void UI::drawMenu(sf::RenderWindow& window, const MenuState& state)
 void UI::drawPauseMenu(sf::RenderWindow& window, const MenuState& state)
 {
     sf::RectangleShape overlay(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-    overlay.setFillColor(sf::Color(0, 0, 0, 100));
+    overlay.setFillColor(sf::Color(0, 0, 0, static_cast<sf::Uint8>(UI_OVERLAY_ALPHA)));
     window.draw(overlay);
     
     const float fontSize = 30.0f;
@@ -182,7 +151,7 @@ void UI::drawPauseMenu(sf::RenderWindow& window, const MenuState& state)
 void UI::drawGameOverMenu(sf::RenderWindow& window, const MenuState& state, int score, const HighScoreManager& highScoreManager)
 {
     sf::RectangleShape overlay(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-    overlay.setFillColor(sf::Color(0, 0, 0, 100));
+    overlay.setFillColor(sf::Color(0, 0, 0, static_cast<sf::Uint8>(UI_OVERLAY_ALPHA)));
     window.draw(overlay);
     
     const float scoreFontSize = 36.0f;
@@ -205,7 +174,7 @@ void UI::drawGameOverMenu(sf::RenderWindow& window, const MenuState& state, int 
     scoreText.setFillColor(sf::Color::White);
     window.draw(scoreText);
 
-    std::vector<HighScoreEntry> topScores = highScoreManager.getTopScores(X);
+    std::vector<HighScoreEntry> topScores = highScoreManager.getTopScores(TOP_SCORES_DISPLAY_COUNT);
     size_t index = 1;
     for (const auto& entry : topScores)
     {
@@ -240,7 +209,7 @@ void UI::drawGameOverMenu(sf::RenderWindow& window, const MenuState& state, int 
 void UI::drawVictoryMenu(sf::RenderWindow& window, const MenuState& state)
 {
     sf::RectangleShape overlay(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-    overlay.setFillColor(sf::Color(0, 0, 0, 100));
+    overlay.setFillColor(sf::Color(0, 0, 0, static_cast<sf::Uint8>(UI_OVERLAY_ALPHA)));
     window.draw(overlay);
     
     const float titleFontSize = 48.0f;
@@ -281,16 +250,16 @@ void UI::drawCountdown(sf::RenderWindow& window, float remainingSeconds)
     sf::Text text;
     text.setFont(font);
     
-    if (remainingSeconds > 2.0f)
+    if (remainingSeconds > COUNTDOWN_THRESHOLD_3)
         text.setString("3");
-    else if (remainingSeconds > 1.0f)
+    else if (remainingSeconds > COUNTDOWN_THRESHOLD_2)
         text.setString("2");
-    else if (remainingSeconds > 0.0f)
+    else if (remainingSeconds > COUNTDOWN_THRESHOLD_1)
         text.setString("1");
     else
         text.setString("GO!");
     
-    text.setCharacterSize(80u);
+    text.setCharacterSize(static_cast<unsigned int>(COUNTDOWN_FONT_SIZE));
     text.setFillColor(sf::Color::White);
     text.setPosition(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT / 2.0f);
     text.setOrigin(text.getLocalBounds().width / 2, text.getLocalBounds().height / 2);
@@ -355,7 +324,7 @@ void UI::resetNameInput()
 void UI::drawNameInputPopup(sf::RenderWindow& window, MenuState& state)
 {
     sf::RectangleShape overlay(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEIGHT));
-    overlay.setFillColor(sf::Color(0, 0, 0, 100));
+    overlay.setFillColor(sf::Color(0, 0, 0, static_cast<sf::Uint8>(UI_OVERLAY_ALPHA)));
     window.draw(overlay);
     
     const float titleFontSize = 40.0f;
@@ -443,11 +412,6 @@ void UI::select(MenuState& state)
     {
         if (selectedText == MENU_START_GAME)
             gameStateManager.setState(GameState::WAITING);
-        else if (selectedText == MENU_DIFFICULTY)
-        {
-            openDifficultyMenu();
-            state.setSelectedIndex(0);
-        }
         else if (selectedText == MENU_HIGH_SCORES)
             gameStateManager.setState(GameState::HIGH_SCORES);
         else if (selectedText == MENU_SETTINGS)
@@ -462,41 +426,7 @@ void UI::select(MenuState& state)
     {
         std::string firstItemText = currentMenu[0].text;
         
-        if (firstItemText == DIFFICULTY_EASY || firstItemText == DIFFICULTY_MEDIUM)
-        {
-            if (selectedText == DIFFICULTY_EASY)
-            {
-                state.setDifficultyLevel(DIFFICULTY_EASY);
-                state.setV(1); state.setP(2); state.setL(1);
-            }
-            else if (selectedText == DIFFICULTY_EASIER_THAN_MEDIUM)
-            {
-                state.setDifficultyLevel(DIFFICULTY_EASIER_THAN_MEDIUM);
-                state.setV(2); state.setP(4); state.setL(1);
-            }
-            else if (selectedText == DIFFICULTY_MEDIUM)
-            {
-                state.setDifficultyLevel(DIFFICULTY_MEDIUM);
-                state.setV(3); state.setP(6); state.setL(2);
-            }
-            else if (selectedText == DIFFICULTY_EASIER_THAN_HARD)
-            {
-                state.setDifficultyLevel(DIFFICULTY_EASIER_THAN_HARD);
-                state.setV(4); state.setP(8); state.setL(2);
-            }
-            else if (selectedText == DIFFICULTY_HARD)
-            {
-                state.setDifficultyLevel(DIFFICULTY_HARD);
-                state.setV(5); state.setP(10); state.setL(3);
-            }
-            
-            if (firstItemText == DIFFICULTY_EASY || firstItemText == DIFFICULTY_MEDIUM)
-            {
-                menuStack.pop_back();
-                state.setSelectedIndex(1);
-            }
-        }
-        else if (firstItemText == SETTINGS_SOUND || firstItemText == SETTINGS_MUSIC)
+        if (firstItemText == SETTINGS_SOUND || firstItemText == SETTINGS_MUSIC)
         {
             if (selectedText == SETTINGS_SOUND)
                 state.setSoundEnabled(!state.getSoundEnabled());

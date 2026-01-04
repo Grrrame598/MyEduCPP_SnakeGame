@@ -48,3 +48,9 @@ Thumbs.db
 
 # Optional: VS Code settings (if you're using it)
 .vscode/
+
+# Technical/backup files
+check*.txt
+PLAN_*
+BACKUP_*
+*.puml

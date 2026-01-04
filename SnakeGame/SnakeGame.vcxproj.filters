@@ -7,22 +7,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Apple.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Game.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="GameField.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="GameMain.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Math.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Snake.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="HighScoreManager.cpp">
@@ -45,14 +33,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Apple.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="GameField.h" />
     <ClInclude Include="GameStateManager.h" />
     <ClInclude Include="HighScoreManager.h" />
-    <ClInclude Include="Math.h" />
-    <ClInclude Include="Snake.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="GameObject.h" />

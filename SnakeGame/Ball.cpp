@@ -1,16 +1,16 @@
 #include "Ball.h"
 #include "Constants.h"
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 
 Ball::Ball()
     : GameObject(),
-      radius(CELL_SIZE * 0.5f),
-      speed(450.0f),
-      velocity(speed * 0.5f, -speed * 0.8660254f)
+      radius(BALL_RADIUS),
+      speed(BALL_INITIAL_SPEED),
+      velocity(speed * BALL_INITIAL_VELOCITY_X_COEFF, -speed * BALL_INITIAL_VELOCITY_Y_COEFF)
 {
-    position = sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 2 * CELL_SIZE - 10.0f - 80.0f);
+    position = sf::Vector2f(SCREEN_WIDTH / 2.0f, SCREEN_HEIGHT - 2 * CELL_SIZE - 10.0f - BALL_START_OFFSET_Y);
     initializeShape();
 }
 
@@ -44,16 +44,6 @@ sf::Vector2f Ball::getCenter() const
     return position;
 }
 
-void Ball::reflectX()
-{
-    velocity.x = -velocity.x;
-}
-
-void Ball::reflectY()
-{
-    velocity.y = -velocity.y;
-}
-
 void Ball::setVelocityX(float vx)
 {
     velocity.x = vx;
@@ -64,5 +54,11 @@ void Ball::setVelocity(const sf::Vector2f& v)
     velocity = v;
 }
 
-} // namespace SnakeGame
+void Ball::setPosition(const sf::Vector2f& pos)
+{
+    position = pos;
+    shape.setPosition(position);
+}
+
+} // namespace ArkanoidGame
 

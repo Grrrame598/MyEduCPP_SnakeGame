@@ -1,0 +1,57 @@
+===========================================
+  UML Диаграмма Классов - Arkanoid Game
+===========================================
+
+                    GameObject (абстрактный)
+                    + position: sf::Vector2f
+                    + getPosition(): sf::Vector2f
+                    + update(deltaTime, window*): void (абстрактный)
+                    + draw(window&): void (абстрактный)
+                    + getBounds(): sf::FloatRect (абстрактный)
+                           |
+            +--------------+--------------+
+            |              |              |
+            |              |              |
+          Ball          Paddle         Block (абстрактный)
+          -radius       -width          #shape
+          -velocity     -height         #width
+          +reflectX()    -speed         #height
+          +reflectY()    +getVelocityX() +onHit() (абстрактный)
+          +setVelocity()                +isDestroyed() (абстрактный)
+                                        +getHitsRemaining() (абстрактный)
+                                               |
+                    +--------------------------+-------------------+-------------------+
+                    |                          |                   |                   |
+                    |                          |                   |                   |
+            SimpleBlock              StrongBlock          BonusBlock         UnbreakableBlock
+            -destroyed               -hitsRequired        -destroyed         (нет полей)
+                                     -currentHits
+
+                    Game
+                    -ball: Ball
+                    -paddle: Paddle
+                    -blocks: vector<unique_ptr<Block>>
+                    -score: int
+                    +initialize()
+                    +update()
+                    +draw()
+                    +isGameOver(): bool
+                    +isVictory(): bool
+                    +restartGame()
+                    -checkBallPaddleCollision()
+                    -checkBallBlocksCollisions()
+
+                    Game --* Ball          (композиция)
+                    Game --* Paddle        (композиция)
+                    Game --* Block         (композиция, 0..*)
+                    Game --> SoundManager  (использование)
+
+===========================================
+Легенда:
+- Наследование показано через | и +
+- Композиция (*--) означает, что Game владеет объектами
+- Использование (-->) означает зависимость
+- # - protected член
+- + - public метод/член
+- - - private метод/член
+
