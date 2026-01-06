@@ -3,8 +3,17 @@
 #include "Constants.h"
 #include "GameObject.h"
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
+
+enum class BlockType
+{
+    SIMPLE,
+    STRONG,
+    TRIPLE,
+    UNBREAKABLE,
+    BONUS
+};
 
 class Block : public GameObject
 {
@@ -19,6 +28,7 @@ public:
     virtual void onHit() = 0;
     virtual bool isDestroyed() const = 0;
     virtual int getHitsRemaining() const = 0;
+    virtual int getPoints() const = 0;
 
 protected:
     sf::RectangleShape shape;
@@ -36,6 +46,7 @@ public:
     void onHit() override;
     bool isDestroyed() const override;
     int getHitsRemaining() const override;
+    int getPoints() const override;
 
 private:
     bool destroyed;
@@ -49,6 +60,7 @@ public:
     void onHit() override;
     bool isDestroyed() const override;
     int getHitsRemaining() const override;
+    int getPoints() const override;
 
 private:
     int hitsRequired;
@@ -63,6 +75,7 @@ public:
     void onHit() override;
     bool isDestroyed() const override;
     int getHitsRemaining() const override;
+    int getPoints() const override;
 
 private:
     bool destroyed;
@@ -76,6 +89,11 @@ public:
     void onHit() override;
     bool isDestroyed() const override;
     int getHitsRemaining() const override;
+    int getPoints() const override;
+    void destroyByArmor(); // Метод для уничтожения бронебойным шариком
+
+private:
+    bool destroyedByArmor = false; // Флаг уничтожения бронебойным шариком
 };
 
 // Блок с тремя ударами
@@ -86,11 +104,12 @@ public:
     void onHit() override;
     bool isDestroyed() const override;
     int getHitsRemaining() const override;
+    int getPoints() const override;
 
 private:
     int currentHits;
     void updateColor();
 };
 
-} // namespace SnakeGame
+} // namespace ArkanoidGame
 

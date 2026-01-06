@@ -3,7 +3,7 @@
 #include "Constants.h"
 #include "GameObject.h"
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 
 class Ball : public GameObject
@@ -16,20 +16,26 @@ public:
     
     float getRadius() const { return radius; }
     sf::Vector2f getCenter() const;
-    void reflectX();  // Отражение по оси X (горизонтальное)
-    void reflectY();  // Отражение по оси Y (вертикальное)
     sf::Vector2f getVelocity() const { return velocity; }
     void setVelocityX(float vx);
     void setVelocity(const sf::Vector2f& v);
+    void setPosition(const sf::Vector2f& pos);
+    
+    // Методы для работы с бонусами
+    void setColor(const sf::Color& color);
+    sf::Color getColor() const;
+    void setArmorActive(bool active);
+    bool isArmorActive() const { return armorActive; }
 
 private:
     sf::CircleShape shape;
     float radius;
     float speed;
     sf::Vector2f velocity;
+    bool armorActive = false;
     
     void initializeShape();
 };
 
-} // namespace SnakeGame
+} // namespace ArkanoidGame
 

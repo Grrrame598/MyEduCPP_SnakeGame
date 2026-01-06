@@ -3,7 +3,7 @@
 #include "Constants.h"
 #include "GameObject.h"
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 
 class Paddle : public GameObject
@@ -14,18 +14,21 @@ public:
     void draw(sf::RenderWindow& window) override;
     sf::Vector2f getSize() const;
     sf::FloatRect getBounds() const override;
-    float getVelocityX() const { return currentVelocityX; }  // Текущая скорость платформы по X
+    float getVelocityX() const { return currentVelocityX; }
+    
+    // Метод для работы с бонусами
+    void setWidth(float newWidth);
 
 private:
     sf::RectangleShape shape;
     float width;
     float height;
     float speed;
-    float currentVelocityX;
+    float currentVelocityX = 0.0f;
     sf::Vector2i previousMousePos;
     
     void initializeShape();
 };
 
-} // namespace SnakeGame
+} // namespace ArkanoidGame
 

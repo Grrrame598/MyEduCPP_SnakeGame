@@ -2,7 +2,7 @@
 #include "UI.h"
 #include <cassert>
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 
 SoundManager::SoundManager(MenuState* menuState)
@@ -12,8 +12,8 @@ SoundManager::SoundManager(MenuState* menuState)
     assert(sessionEndBuffer.loadFromFile(RESOURCES_PATH + "Maodin204__Lose.wav"));
     sessionEndSound.setBuffer(sessionEndBuffer);
 
-    assert(appleEatBuffer.loadFromFile(RESOURCES_PATH + "Owlstorm__Snake_hit.wav"));
-    appleEatSound.setBuffer(appleEatBuffer);
+    assert(blockHitBuffer.loadFromFile(RESOURCES_PATH + "Owlstorm__Snake_hit.wav"));
+    blockHitSound.setBuffer(blockHitBuffer);
 
     assert(menuHoverBuffer.loadFromFile(RESOURCES_PATH + "Theevilsocks__menu-hover.wav"));
     menuHoverSound.setBuffer(menuHoverBuffer);
@@ -34,7 +34,7 @@ void SoundManager::playBackgroundMusic()
 {
     if (menuState && menuState->getMusicEnabled())
     {
-        backgroundMusic.setVolume(30.0f);
+        backgroundMusic.setVolume(BACKGROUND_MUSIC_VOLUME);
         backgroundMusic.play();
         backgroundMusic.setLoop(true);
     }
@@ -45,12 +45,12 @@ void SoundManager::stopBackgroundMusic()
     backgroundMusic.stop();
 }
 
-void SoundManager::playAppleEat()
+void SoundManager::playBlockHit()
 {
     if (menuState && menuState->getSoundEnabled())
     {
-        appleEatSound.setVolume(100.0f);
-        appleEatSound.play();
+        blockHitSound.setVolume(SOUND_EFFECTS_VOLUME);
+        blockHitSound.play();
     }
 }
 
@@ -65,9 +65,9 @@ void SoundManager::playEnter()
     if (menuState && menuState->getSoundEnabled())
     {
         enterSound.stop();
-        enterSound.setVolume(100.0f);
+        enterSound.setVolume(SOUND_EFFECTS_VOLUME);
         enterSound.play();
     }
 }
 
-} // namespace SnakeGame
+} // namespace ArkanoidGame

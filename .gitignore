@@ -48,3 +48,58 @@ Thumbs.db
 
 # Optional: VS Code settings (if you're using it)
 .vscode/
+
+# Technical/backup files
+check*.txt
+BACKUP_*
+
+# Temporary files from merge/resolve operations
+temp_*.cpp
+temp_*.h
+temp_*.txt
+
+# Development documentation (internal notes, not for final repo)
+FINAL_*.md
+MERGE_*.md
+GIT_*.md
+PUSH_*.md
+repair_*.md
+BACKUP_*.md
+BACKUP_*.txt
+
+# Scripts and automation files
+*.ps1
+*.bat
+*.sh
+
+# Development notes, plans, and guides
+*_PROGRESS.md
+*_STATE_*.md
+*_GUIDE.md
+*_SUMMARY.md
+*_PLAN.md
+*_EXPLANATION.md
+README_UML.md
+SAVE_SYSTEM_RESTORATION.md
+CONTEXT_SUMMARY.md
+CONSTRUCTORS_GUIDE.md
+INHERITANCE_REFACTORING_PLAN.md
+VIRTUAL_METHODS_EXPLANATION.md
+
+# UML and diagram files
+*.puml
+ClassDiagram*.txt
+ATM_*.puml
+
+# Temporary code files
+PLAN_*.cpp
+
+# Strange temporary files (if any)
+e HEAD
+ion-
+Files created
+
+# DLL files in root (should be in Resources or ignored)
+# Note: openal32.dll in Resources/ is needed, but in root should be ignored
+/openal32.dll
+SnakeGame/openal32.dll

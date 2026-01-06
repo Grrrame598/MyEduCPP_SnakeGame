@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 
 class Application
@@ -15,6 +15,6 @@ public:
     virtual void handleInput(sf::Keyboard::Key key) = 0;
 };
 
-} // namespace SnakeGame
+} // namespace ArkanoidGame
 
 

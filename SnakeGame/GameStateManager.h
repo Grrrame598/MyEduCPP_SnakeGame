@@ -1,7 +1,7 @@
 #pragma once
 #include "Constants.h"
 
-namespace SnakeGame
+namespace ArkanoidGame
 {
 
 // Класс для управления состоянием игры (RAII)
@@ -20,5 +20,5 @@ public:
 
 extern GameStateManager gameStateManager;
 
-} // namespace SnakeGame
+} // namespace ArkanoidGame
 

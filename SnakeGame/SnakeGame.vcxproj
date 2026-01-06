@@ -158,28 +158,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Apple.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="GameField.cpp" />
     <ClCompile Include="GameMain.cpp" />
-    <ClCompile Include="Math.cpp" />
-    <ClCompile Include="Snake.cpp" />
     <ClCompile Include="HighScoreManager.cpp" />
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="Paddle.cpp" />
     <ClCompile Include="Ball.cpp" />
     <ClCompile Include="Block.cpp" />
+    <ClCompile Include="FallingBonus.cpp" />
+    <ClCompile Include="BonusEffect.cpp" />
+    <ClCompile Include="GameObjectFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Apple.h" />
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="GameField.h" />
     <ClInclude Include="GameStateManager.h" />
     <ClInclude Include="HighScoreManager.h" />
-    <ClInclude Include="Math.h" />
-    <ClInclude Include="Snake.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="Application.h" />
@@ -187,6 +182,9 @@
     <ClInclude Include="Paddle.h" />
     <ClInclude Include="Ball.h" />
     <ClInclude Include="Block.h" />
+    <ClInclude Include="FallingBonus.h" />
+    <ClInclude Include="BonusEffect.h" />
+    <ClInclude Include="GameObjectFactory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
